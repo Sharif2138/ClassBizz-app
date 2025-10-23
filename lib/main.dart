@@ -1,24 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:classbizz_app/screens/aunthentication/Home_screen.dart';
+import 'welcome_screen.dart';
+import 'login_screen.dart';
 
 void main() {
-  runApp(const ClassBizz());
+  runApp(const ClassBizzApp());
 }
 
-class ClassBizz extends StatelessWidget {
-  const ClassBizz({super.key});
+class ClassBizzApp extends StatelessWidget {
+  const ClassBizzApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'ClassBizz App',
+      title: 'ClassBizz',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        primarySwatch: Colors.blue,
+        fontFamily: 'Poppins',
+        useMaterial3: true,
       ),
-      home: const HomeScreen(),
+      home: const WelcomeScreen(),
+      routes: {
+        '/login': (context) => const LoginScreen(),
+      },
     );
   }
 }
-
