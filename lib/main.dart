@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'welcome_screen.dart';
-import 'login_screen.dart';
+import 'screens/aunthentication/home_screen.dart';
+import 'screens/aunthentication/login_screen.dart';
 
 void main() {
   runApp(const ClassBizzApp());
