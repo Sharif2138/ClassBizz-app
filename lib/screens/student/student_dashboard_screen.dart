@@ -41,6 +41,19 @@ class StudentDashboardScreen extends StatelessWidget {
                 },
               ),
             ),
+
+            SliverToBoxAdapter(
+            child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/student/review');
+              },
+              child: const Text('Go to Review Screen'),
+              ),
+            ),
+          ),
+
             SliverList(
               delegate: SliverChildListDelegate(
                 const [
@@ -521,7 +534,14 @@ class _StudentBottomNavBar extends StatelessWidget {
       currentIndex: currentIndex,
       onTap: (index) {
         // TODO: hook to your main navigation
+          if (index == 0) {
+          Navigator.pushNamed(context, '/student/dashboard');
+        } else if (index == 2) {
+          Navigator.pushNamed(context, '/student/profile');
+      }
+
       },
+
       items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.home_outlined),

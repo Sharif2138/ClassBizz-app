@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:classbizz_app/screens/aunthentication/Home_screen.dart';
 import 'package:classbizz_app/screens/student/student_dashboard_screen.dart';
 import 'package:classbizz_app/screens/student/join_session_screen.dart';
+import 'package:classbizz_app/screens/student/review_screen.dart';
+import 'package:classbizz_app/screens/student/student_profile_screen.dart';
+
 
 void main() {
   runApp(const ClassBizz());
@@ -21,6 +24,8 @@ class ClassBizz extends StatelessWidget {
       routes: {
         '/student/dashboard': (context) => const StudentDashboardScreen(),
         '/student/join': (context) => const JoinSessionScreen(),
+        '/student/review': (context) => const ReviewScreen(),
+        '/student/profile': (context) => const StudentProfileScreen(),
       },
       home: const StudentDashboardScreen(),
 
