@@ -22,7 +22,7 @@ class StudentDashboardScreen extends StatelessWidget {
               child: _QuickActionsCard(
                 onStartClass: () {
                   // TODO: navigate to join/start session screen
-                  // Navigator.pushNamed(context, '/student/join');
+                  Navigator.pushNamed(context, '/student/join');
                 },
                 onLeaderboard: () {
                   // TODO: navigate to leaderboard screen
