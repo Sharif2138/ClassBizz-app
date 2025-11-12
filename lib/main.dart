@@ -8,7 +8,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const ClassBizz());
+  runApp(const ClassBizzApp());
 }
 
 class ClassBizzApp extends StatelessWidget {
