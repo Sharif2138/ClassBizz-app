@@ -11,25 +11,19 @@ void main() async {
   runApp(const ClassBizz());
 }
 
-class ClassBizz extends StatelessWidget {
-  const ClassBizz({super.key});
+class ClassBizzApp extends StatelessWidget {
+  const ClassBizzApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'ClassBizz App',
+      title: 'ClassBizz',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      // 👇👇 Add this block below
-      routes: {
-        '/student/dashboard': (context) => const StudentDashboardScreen(),
-        '/student/join': (context) => const JoinSessionScreen(),
-        '/student/review': (context) => const ReviewScreen(),
-        '/student/profile': (context) => const StudentProfileScreen(),
-      },
-      home: const StudentDashboardScreen(),
-
+      home: const HomeScreen(),
     );
   }
 }
