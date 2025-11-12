@@ -14,17 +14,22 @@ void main() async {
 class ClassBizz extends StatelessWidget {
   const ClassBizz({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'ClassBizz App',
       theme: ThemeData(
-        
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const HomeScreen(),
+      // 👇👇 Add this block below
+      routes: {
+        '/student/dashboard': (context) => const StudentDashboardScreen(),
+        '/student/join': (context) => const JoinSessionScreen(),
+        '/student/review': (context) => const ReviewScreen(),
+        '/student/profile': (context) => const StudentProfileScreen(),
+      },
+      home: const StudentDashboardScreen(),
+
     );
   }
 }
-
