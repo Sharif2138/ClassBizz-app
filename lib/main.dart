@@ -1,7 +1,8 @@
+import 'package:classbizz_app/screens/aunthentication/login_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:classbizz_app/screens/aunthentication/Home_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'screens/aunthentication/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,11 +20,14 @@ class ClassBizzApp extends StatelessWidget {
     return MaterialApp(
       title: 'ClassBizz',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
+      initialRoute: '/', 
+       routes: {
+        '/': (context) => const WelcomeScreen(),
+        '/login':(context) => const LoginScreen(),
         
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const HomeScreen(),
+  
+       },
+      home: const WelcomeScreen(),
     );
   }
 }

@@ -65,7 +65,33 @@ class WelcomeScreen extends StatelessWidget {
                   height: 55,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/login');
+                      Navigator.pushNamed(context, '/Login');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text(
+                      'Login',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+
+                SizedBox(height: 16),
+
+                SizedBox(
+                  width: double.infinity,
+                  height: 55,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/sign up');
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blueAccent,

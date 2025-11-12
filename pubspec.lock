@@ -334,10 +334,5 @@ packages:
     source: hosted
     version: "1.1.1"
 sdks:
-<<<<<<< HEAD
-  dart: ">=3.9.2 <4.0.0"
-  flutter: ">=3.22.0"
-=======
   dart: ">=3.9.0 <4.0.0"
-  flutter: ">=3.18.0-18.0.pre.54"
->>>>>>> origin/feature/authentication
+  flutter: ">=3.22.0"
