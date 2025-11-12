@@ -32,33 +32,6 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             const SizedBox(height: 30),
 
-            const Text('I am a', style: TextStyle(fontSize: 16)),
-
-            const SizedBox(height: 10),
-
-            Row(
-              children: [
-                Expanded(
-                  child: _RoleButton(
-                    title: 'Student',
-                    isActive: isStudent,
-                    icon: Icons.school,
-                    onTap: () => setState(() => isStudent = true),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _RoleButton(
-                    title: 'Facilitator',
-                    isActive: !isStudent,
-                    icon: Icons.person,
-                    onTap: () => setState(() => isStudent = false),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 30),
-
             // Email field
             TextField(
               decoration: InputDecoration(
@@ -105,39 +78,46 @@ class _LoginScreenState extends State<LoginScreen> {
 
             const SizedBox(height: 20),
 
-            const Center(
-              child: Text(
-                'OR CONTINUE WITH',
-                style: TextStyle(color: Colors.grey),
+            Center(
+              child: Row(
+                children: [
+                  const Text(
+                    'Dont have an account?', 
+                  ),
+                  const SizedBox(width: 4),
+                  TextButton(onPressed: () {
+                    Navigator.pushNamed(context, '/signup');
+                  }, child: const Text("Sign Up"))
+                ],
               ),
             ),
 
             const SizedBox(height: 10),
 
-            Center(
-              child: OutlinedButton.icon(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.g_mobiledata,
-                  color: Colors.black,
-                  size: 30,
-                ),
-                label: Text(
-                  'Continue with Google',
-                  style: TextStyle(color: Colors.black),
-                ),
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 12,
-                    horizontal: 24,
-                  ),
-                  side: const BorderSide(color: Colors.grey),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-            ),
+            // Center(
+            //   child: OutlinedButton.icon(
+            //     onPressed: () {},
+            //     icon: const Icon(
+            //       Icons.g_mobiledata,
+            //       color: Colors.black,
+            //       size: 30,
+            //     ),
+            //     label: Text(
+            //       'Continue with Google',
+            //       style: TextStyle(color: Colors.black),
+            //     ),
+            //     style: OutlinedButton.styleFrom(
+            //       padding: const EdgeInsets.symmetric(
+            //         vertical: 12,
+            //         horizontal: 24,
+            //       ),
+            //       side: const BorderSide(color: Colors.grey),
+            //       shape: RoundedRectangleBorder(
+            //         borderRadius: BorderRadius.circular(10),
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -145,51 +125,3 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-class _RoleButton extends StatelessWidget {
-  final String title;
-  final bool isActive;
-  final IconData icon;
-  final VoidCallback onTap;
-
-  const _RoleButton({
-    required this.title,
-    required this.isActive,
-    required this.icon,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 55,
-        decoration: BoxDecoration(
-          color: isActive ? Colors.blueAccent.withAlpha(26) : Colors.white,
-          border: Border.all(
-            color: isActive ? Colors.blueAccent : Colors.grey.shade300,
-          ),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              color: isActive ? Colors.blueAccent : Colors.grey,
-              size: 22,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              title,
-              style: TextStyle(
-                fontWeight: FontWeight.w500,
-                color: isActive ? Colors.blueAccent : Colors.grey,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}

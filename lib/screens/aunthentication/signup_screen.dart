@@ -113,11 +113,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
             const SizedBox(height: 20),
 
             Center(
-              child: TextButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/login');
-                },
-                child: const Text('Already have an account? Login'),
+              child: Row(
+                children: [const Text('Already have an account? '),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/login');
+                    },
+                    child: const Text('Login'),
+                  ),
+                ],
               ),
             ),
           ],
