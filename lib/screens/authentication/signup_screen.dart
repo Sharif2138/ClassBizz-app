@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SignUpScreenState extends State<SignUpScreen> {
   bool isStudent = true;
 
   @override
@@ -27,13 +27,12 @@ class _LoginScreenState extends State<LoginScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Welcome Back',
+              'Create Account',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 30),
 
             const Text('I am a', style: TextStyle(fontSize: 16)),
-
             const SizedBox(height: 10),
 
             Row(
@@ -59,8 +58,16 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             const SizedBox(height: 30),
 
-            // Email field
-            const TextField(
+            TextField(
+              decoration: InputDecoration(
+                labelText: 'Full Name',
+                prefixIcon: Icon(Icons.person_outline),
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            TextField(
               decoration: InputDecoration(
                 labelText: 'Email Address',
                 prefixIcon: Icon(Icons.email_outlined),
@@ -69,8 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             const SizedBox(height: 16),
 
-            // Password field
-            const TextField(
+            TextField(
               obscureText: true,
               decoration: InputDecoration(
                 labelText: 'Password',
@@ -78,14 +84,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 border: OutlineInputBorder(),
               ),
             ),
-
             const SizedBox(height: 30),
 
             SizedBox(
               width: double.infinity,
               height: 50,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/home');
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueAccent,
                   shape: RoundedRectangleBorder(
@@ -93,11 +100,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 child: const Text(
-                  'Login',
+                  'Sign Up',
                   style: TextStyle(
+                    color: Colors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    color: Colors.white,
                   ),
                 ),
               ),
@@ -105,37 +112,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
             const SizedBox(height: 20),
 
-            const Center(
-              child: Text(
-                'OR CONTINUE WITH',
-                style: TextStyle(color: Colors.grey),
-              ),
-            ),
-
-            const SizedBox(height: 10),
-
             Center(
-              child: OutlinedButton.icon(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.g_mobiledata,
-                  color: Colors.black,
-                  size: 30,
-                ),
-                label: const Text(
-                  'Continue with Google',
-                  style: TextStyle(color: Colors.black),
-                ),
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 12,
-                    horizontal: 24,
-                  ),
-                  side: const BorderSide(color: Colors.grey),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
+              child: TextButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/login');
+                },
+                child: const Text('Already have an account? Login'),
               ),
             ),
           ],

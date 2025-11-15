@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'screens/aunthentication/home_screen.dart';
-import 'screens/aunthentication/login_screen.dart';
+import 'screens/authentication/home_screen.dart';
+import 'screens/authentication/login_screen.dart';
 
 void main() {
   runApp(const ClassBizzApp());
@@ -20,9 +20,7 @@ class ClassBizzApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const WelcomeScreen(),
-      routes: {
-        '/login': (context) => const LoginScreen(),
-      },
+      routes: {'/login': (context) => const LoginScreen()},
     );
   }
 }
