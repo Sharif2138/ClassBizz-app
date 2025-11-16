@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/auth_provider.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -8,10 +10,26 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  final formKey = GlobalKey<FormState>();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   bool isStudent = true;
 
   @override
   Widget build(BuildContext context) {
+    final auth = context.watch<AuthProvider>();
+
+    // Show error messages as SnackBar
+    if (auth.errorMessage != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(auth.errorMessage!)));
+        auth.errorMessage = null; // reset after showing
+      });
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -23,108 +41,148 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Create Account',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 30),
-
-            const Text('I am a', style: TextStyle(fontSize: 16)),
-            const SizedBox(height: 10),
-
-            Row(
-              children: [
-                Expanded(
-                  child: _RoleButton(
-                    title: 'Student',
-                    isActive: isStudent,
-                    icon: Icons.school,
-                    onTap: () => setState(() => isStudent = true),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _RoleButton(
-                    title: 'Facilitator',
-                    isActive: !isStudent,
-                    icon: Icons.person,
-                    onTap: () => setState(() => isStudent = false),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 30),
-
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'Full Name',
-                prefixIcon: Icon(Icons.person_outline),
-                border: OutlineInputBorder(),
+        child: Form(
+          key: formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20),
+              const Text(
+                'Create Account',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
-            ),
-            const SizedBox(height: 16),
+              const SizedBox(height: 30),
 
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'Email Address',
-                prefixIcon: Icon(Icons.email_outlined),
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 16),
+              const Text('I am a', style: TextStyle(fontSize: 16)),
+              const SizedBox(height: 10),
 
-            TextField(
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                prefixIcon: Icon(Icons.lock_outline),
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 30),
-
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/home');
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+              Row(
+                children: [
+                  Expanded(
+                    child: _RoleButton(
+                      title: 'Student',
+                      isActive: isStudent,
+                      icon: Icons.school,
+                      onTap: () => setState(() => isStudent = true),
+                    ),
                   ),
-                ),
-                child: const Text(
-                  'Sign Up',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            Center(
-              child: Row(
-                children: [const Text('Already have an account? '),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/login');
-                    },
-                    child: const Text('Login'),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _RoleButton(
+                      title: 'Facilitator',
+                      isActive: !isStudent,
+                      icon: Icons.person,
+                      onTap: () => setState(() => isStudent = false),
+                    ),
                   ),
                 ],
               ),
-            ),
-          ],
+              const SizedBox(height: 30),
+
+              // Name
+              TextFormField(
+                controller: _nameController,
+                validator: (value) =>
+                    value == null || value.isEmpty ? 'Name is required' : null,
+                decoration: const InputDecoration(
+                  labelText: 'Full Name',
+                  prefixIcon: Icon(Icons.person_outline),
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Email
+              TextFormField(
+                controller: _emailController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Email is required';
+                  }
+                  final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+                  if (!emailRegex.hasMatch(value)) {
+                    return 'Enter a valid email';
+                  }
+                  return null;
+                },
+                decoration: const InputDecoration(
+                  labelText: 'Email Address',
+                  prefixIcon: Icon(Icons.email_outlined),
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Password
+              TextFormField(
+                controller: _passwordController,
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Password is required'
+                    : null,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'Password',
+                  prefixIcon: Icon(Icons.lock_outline),
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 30),
+
+              // Sign Up button
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: auth.isLoading
+                      ? null
+                      : () {
+                          FocusScope.of(context).unfocus();
+                          if (!formKey.currentState!.validate()) return;
+                          auth.signUp(
+                            _nameController.text.trim(),
+                            _emailController.text.trim(),
+                            _passwordController.text.trim(),
+                            isStudent,
+                          );
+                        },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: auth.isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
+                          'Sign Up',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // Login navigation
+              Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Already have an account? '),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(context, '/login');
+                      },
+                      child: const Text('Login'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

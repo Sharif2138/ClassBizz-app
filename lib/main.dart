@@ -1,22 +1,28 @@
+import 'package:classbizz_app/screens/aunthentication/home_screen.dart';
 import 'package:classbizz_app/screens/shared/session_screen.dart';
 import 'package:classbizz_app/screens/student/student_dashboard_screen.dart';
 import 'package:classbizz_app/screens/lecturer/lecturer_dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-// import 'screens/aunthentication/home_screen.dart';
 import 'screens/aunthentication/signup_screen.dart';
 import 'screens/aunthentication/login_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'services/firestore_service.dart'; // removed: file does not exist
+import 'package:provider/provider.dart';
+import 'providers/auth_provider.dart';
+import 'screens/aunthentication/email_verifictaion_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<AuthProvider>(create: (_) => AuthProvider()),
+      ],
+      child: const ClassBizzApp(),
+    ),
   );
-  runApp(const ClassBizzApp());
 }
 
 class ClassBizzApp extends StatelessWidget {
@@ -27,15 +33,16 @@ class ClassBizzApp extends StatelessWidget {
     return MaterialApp(
       title: 'ClassBizz',
       debugShowCheckedModeBanner: false,
-      initialRoute: '/', 
-       routes: {
-        '/': (context) => AuthWrapper(),
-        'home': (context) => const HomeScreen(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const AuthWrapper(),
+        '/home': (context) => const HomeScreen(),
         '/student/dashboard': (context) => const StudentDashboardScreen(),
         '/lecturer/dashboard': (context) => const LecturerDashboardScreen(),
-        '/login':(context) => const LoginScreen(),
-        '/signup':(context) => const SignUpScreen(),
-       },
+        '/login': (context) => const LoginScreen(),
+        '/signup': (context) => const SignUpScreen(),
+        '/email-verification': (context) => const EmailVerificationScreen(),
+      },
     );
   }
 }
@@ -45,58 +52,21 @@ class AuthWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
+    final auth = context.watch<AuthProvider>();
 
-        final firebaseUser = snapshot.data;
-
-        if (firebaseUser == null) return const HomeScreen();
-
-        if (!firebaseUser.emailVerified) {
-          // Show a UI prompting the user to verify their email with actions
-          return Scaffold(
-            appBar: AppBar(title: const Text('Verify your email')),
-            body: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text('Please verify your email.'),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () async {
-                      try {
-                        await firebaseUser.sendEmailVerification();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Verification email sent')),
-                        );
-                      } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Failed to send email: $e')),
-                        );
-                      }
-                    },
-                    child: const Text('Resend verification email'),
-                  ),
-                  const SizedBox(height: 8),
-                  ElevatedButton(
-                    onPressed: () => FirebaseAuth.instance.signOut(),
-                    child: const Text('Sign out'),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
-
-        // User is signed in and email is verified
+    if (auth.isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (auth.user == null) {
+      return const WelcomeScreen();
+    } else {
+      if (!auth.user!.emailVerified) {
+        return EmailVerificationScreen();
+      } else {
         return FutureBuilder<DocumentSnapshot>(
           future: FirebaseFirestore.instance
               .collection('users')
-              .doc(firebaseUser.uid)
+              .doc(auth.user!.uid)
               .get(),
           builder: (context, documentSnapshot) {
             if (documentSnapshot.connectionState == ConnectionState.waiting) {
@@ -104,7 +74,7 @@ class AuthWrapper extends StatelessWidget {
             }
 
             if (!documentSnapshot.hasData || !documentSnapshot.data!.exists) {
-              return const Center(child: Text('User data not found.'));
+              return const WelcomeScreen();
             }
 
             final user = documentSnapshot.data!.data() as Map<String, dynamic>;
@@ -116,7 +86,7 @@ class AuthWrapper extends StatelessWidget {
             }
           },
         );
-      },
-    );
+      }
+    }
   }
 }

@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../models/users_model.dart';
 import 'firestore_service.dart';
+
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -122,4 +124,10 @@ class AuthService {
   Future<void> signOut() async {
     await _auth.signOut();
   }
+}
+
+Future<DocumentSnapshot<Map<String, dynamic>>> getUserdata(String uid) async {
+  DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
+      await FirebaseFirestore.instance.collection('users').doc(uid).get();
+  return documentSnapshot;
 }
