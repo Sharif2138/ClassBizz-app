@@ -65,18 +65,22 @@ class EmailVerificationScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              Row(
-                children: [
-                  Text('Finished Verifying?', style: TextStyle(fontSize: 16)),
-                  const Spacer(),
-                  TextButton(
-                    onPressed: () => auth.signOut(),
-                    child: const Text(
-                      'Login',
-                      style: TextStyle(fontSize: 16),
+              Center(
+                child: Row(
+                  children: [
+                    Text('Finished Verifying?', style: TextStyle(fontSize: 16)),
+                    SizedBox(width: 8.0),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/login');
+                      },
+                      child: const Text(
+                        'Login',
+                        style: TextStyle(fontSize: 16),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
