@@ -92,6 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             _emailController.text.trim(),
                             _passwordController.text.trim(),
                           );
+                          Navigator.pop(context);
                         },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blueAccent,
@@ -121,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const Text('Don’t have an account?'),
                     TextButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, '/signup');
+                        Navigator.pushReplacementNamed(context, '/signup');
                       },
                       child: const Text("Sign Up"),
                     ),

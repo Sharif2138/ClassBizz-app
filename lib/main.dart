@@ -61,7 +61,7 @@ class AuthWrapper extends StatelessWidget {
       return const WelcomeScreen();
     } else {
       if (!auth.user!.emailVerified) {
-        return EmailVerificationScreen();
+        return const EmailVerificationScreen();
       } else {
         return FutureBuilder<DocumentSnapshot>(
           future: FirebaseFirestore.instance

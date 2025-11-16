@@ -136,7 +136,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   onPressed: auth.isLoading
                       ? null
                       : () {
-                          FocusScope.of(context).unfocus();
                           if (!formKey.currentState!.validate()) return;
                           auth.signUp(
                             _nameController.text.trim(),
@@ -144,6 +143,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             _passwordController.text.trim(),
                             isStudent,
                           );
+                        Navigator.pop(context);
                         },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blueAccent,
