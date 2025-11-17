@@ -7,7 +7,7 @@ class StudentProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF6F7FB),
-      bottomNavigationBar: const _StudentBottomNavBar(currentIndex: 2),
+      // NOTE: no bottomNavigationBar here
       body: SafeArea(
         child: Column(
           children: [
@@ -97,7 +97,7 @@ class _ProfileTopBar extends StatelessWidget {
             'Profile',
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
           ),
-          const SizedBox(width: 48), // to balance the back button space
+          const SizedBox(width: 48),
         ],
       ),
     );
@@ -137,7 +137,8 @@ class _ProfileHeader extends StatelessWidget {
             const SizedBox(height: 3),
             Row(
               children: [
-                Icon(Icons.shield_moon_outlined, color: Colors.grey.shade500, size: 14),
+                Icon(Icons.shield_moon_outlined,
+                    color: Colors.grey.shade500, size: 14),
                 const SizedBox(width: 4),
                 Text(
                   'Member since 2025',
@@ -285,7 +286,8 @@ class _SessionHistoryTile extends StatelessWidget {
             color: Color(0xFFE9F0FF),
             shape: BoxShape.circle,
           ),
-          child: const Icon(Icons.book_outlined, color: Color(0xFF0F68FF)),
+          child:
+              const Icon(Icons.book_outlined, color: Color(0xFF0F68FF)),
         ),
         title: Text(
           title,
@@ -310,7 +312,8 @@ class _SessionHistoryTile extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
               decoration: BoxDecoration(
                 color: _statusColor.withOpacity(0.12),
                 borderRadius: BorderRadius.circular(20),
@@ -348,30 +351,6 @@ class _BadgeChip extends StatelessWidget {
         label,
         style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
       ),
-    );
-  }
-}
-
-class _StudentBottomNavBar extends StatelessWidget {
-  final int currentIndex;
-  const _StudentBottomNavBar({required this.currentIndex});
-
-  @override
-  Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      currentIndex: currentIndex,
-      onTap: (index) {
-        if (index == 0) {
-          Navigator.popUntil(context, (route) => route.isFirst);
-        } else if (index == 2) {
-          // already here
-        }
-      },
-      items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
-        BottomNavigationBarItem(icon: Icon(Icons.history), label: 'History'),
-        BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profile'),
-      ],
     );
   }
 }

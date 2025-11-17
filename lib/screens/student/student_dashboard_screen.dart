@@ -6,8 +6,7 @@ class StudentDashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // If your app already has a shared bottom nav, remove this bottomNavigationBar
-      bottomNavigationBar: _StudentBottomNavBar(currentIndex: 0),
+      // NOTE: no bottomNavigationBar here anymore
       backgroundColor: const Color(0xFFF6F7FB),
       body: SafeArea(
         child: CustomScrollView(
@@ -15,45 +14,33 @@ class StudentDashboardScreen extends StatelessWidget {
             SliverToBoxAdapter(
               child: _DashboardHeader(),
             ),
-            SliverToBoxAdapter(
-              child: const SizedBox(height: 16),
+            const SliverToBoxAdapter(
+              child: SizedBox(height: 16),
             ),
             SliverToBoxAdapter(
               child: _QuickActionsCard(
                 onStartClass: () {
-                  // TODO: navigate to join/start session screen
-                  Navigator.pushNamed(context, '/student/join');
+                  // navigate to join/start session screen (route will be added in main.dart)
+                  // Example:
+                  // Navigator.pushNamed(context, '/student/join');
                 },
                 onLeaderboard: () {
-                  // TODO: navigate to leaderboard screen
+                  // navigate to leaderboard screen (future)
                   // Navigator.pushNamed(context, '/student/leaderboard');
                 },
               ),
             ),
-            SliverToBoxAdapter(
-              child: const SizedBox(height: 24),
+            const SliverToBoxAdapter(
+              child: SizedBox(height: 24),
             ),
             SliverToBoxAdapter(
               child: _RecentActivityHeader(
                 onViewAll: () {
-                  // TODO: navigate to recent / history screen
+                  // navigate to history screen (future)
                   // Navigator.pushNamed(context, '/student/history');
                 },
               ),
             ),
-
-            SliverToBoxAdapter(
-            child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/student/review');
-              },
-              child: const Text('Go to Review Screen'),
-              ),
-            ),
-          ),
-
             SliverList(
               delegate: SliverChildListDelegate(
                 const [
@@ -124,16 +111,14 @@ class _DashboardHeader extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      // avatar
                       const CircleAvatar(
-                    radius: 20,
-                    backgroundColor: Colors.white,
-                    child: Icon(
-                    Icons.person,
-                    color: Color(0xFF0F68FF),
-                    ),
-                    ),
-
+                        radius: 20,
+                        backgroundColor: Colors.white,
+                        child: Icon(
+                          Icons.person,
+                          color: Color(0xFF0F68FF),
+                        ),
+                      ),
                       const SizedBox(width: 12),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,7 +151,6 @@ class _DashboardHeader extends StatelessWidget {
                       ),
                     ],
                   ),
-                  // notification icon
                   Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
@@ -182,7 +166,6 @@ class _DashboardHeader extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 20),
-              // stats cards row
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: const [
@@ -191,7 +174,7 @@ class _DashboardHeader extends StatelessWidget {
                     title: 'Active Classes',
                     value: '3',
                   ),
-                  _StatCard(
+                _StatCard(
                     icon: Icons.people_alt_outlined,
                     title: 'Total Students',
                     value: '85',
@@ -206,12 +189,11 @@ class _DashboardHeader extends StatelessWidget {
             ],
           ),
         ),
-        // white card overlap
         Positioned(
           bottom: -20,
           left: 0,
           right: 0,
-          child: Container(), // the quick actions card will sit under
+          child: Container(),
         ),
       ],
     );
@@ -462,7 +444,6 @@ class _RecentActivityTile extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // main text
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -517,45 +498,6 @@ class _RecentActivityTile extends StatelessWidget {
           )
         ],
       ),
-    );
-  }
-}
-
-/// ---------------------------------------------------------------------------
-/// BOTTOM NAV (simple placeholder to match Figma)
-/// ---------------------------------------------------------------------------
-class _StudentBottomNavBar extends StatelessWidget {
-  final int currentIndex;
-  const _StudentBottomNavBar({required this.currentIndex});
-
-  @override
-  Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      currentIndex: currentIndex,
-      onTap: (index) {
-        // TODO: hook to your main navigation
-          if (index == 0) {
-          Navigator.pushNamed(context, '/student/dashboard');
-        } else if (index == 2) {
-          Navigator.pushNamed(context, '/student/profile');
-      }
-
-      },
-
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home_outlined),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.history),
-          label: 'History',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person_outline),
-          label: 'Profile',
-        ),
-      ],
     );
   }
 }
