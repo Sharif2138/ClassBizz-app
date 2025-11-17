@@ -12,12 +12,8 @@ class StudentDashboardScreen extends StatelessWidget {
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
-            SliverToBoxAdapter(
-              child: _DashboardHeader(),
-            ),
-            SliverToBoxAdapter(
-              child: const SizedBox(height: 16),
-            ),
+            SliverToBoxAdapter(child: _DashboardHeader()),
+            SliverToBoxAdapter(child: const SizedBox(height: 16)),
             SliverToBoxAdapter(
               child: _QuickActionsCard(
                 onStartClass: () {
@@ -30,9 +26,7 @@ class StudentDashboardScreen extends StatelessWidget {
                 },
               ),
             ),
-            SliverToBoxAdapter(
-              child: const SizedBox(height: 24),
-            ),
+            SliverToBoxAdapter(child: const SizedBox(height: 24)),
             SliverToBoxAdapter(
               child: _RecentActivityHeader(
                 onViewAll: () {
@@ -43,41 +37,39 @@ class StudentDashboardScreen extends StatelessWidget {
             ),
 
             SliverToBoxAdapter(
-            child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/student/review');
-              },
-              child: const Text('Go to Review Screen'),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/student/review');
+                  },
+                  child: const Text('Go to Review Screen'),
+                ),
               ),
             ),
-          ),
 
             SliverList(
-              delegate: SliverChildListDelegate(
-                const [
-                  _RecentActivityTile(
-                    title: 'Advanced Frontend Dev',
-                    studentsCount: 28,
-                    status: ActivityStatus.completed,
-                    timeText: '2 hours ago',
-                  ),
-                  _RecentActivityTile(
-                    title: 'Data Structures',
-                    studentsCount: 32,
-                    status: ActivityStatus.upcoming,
-                    timeText: 'Tomorrow 10:00 AM',
-                  ),
-                  _RecentActivityTile(
-                    title: 'Computer Networks',
-                    studentsCount: 25,
-                    status: ActivityStatus.upcoming,
-                    timeText: 'Wednesday 2:00 PM',
-                  ),
-                  SizedBox(height: 24),
-                ],
-              ),
+              delegate: SliverChildListDelegate(const [
+                _RecentActivityTile(
+                  title: 'Advanced Frontend Dev',
+                  studentsCount: 28,
+                  status: ActivityStatus.completed,
+                  timeText: '2 hours ago',
+                ),
+                _RecentActivityTile(
+                  title: 'Data Structures',
+                  studentsCount: 32,
+                  status: ActivityStatus.upcoming,
+                  timeText: 'Tomorrow 10:00 AM',
+                ),
+                _RecentActivityTile(
+                  title: 'Computer Networks',
+                  studentsCount: 25,
+                  status: ActivityStatus.upcoming,
+                  timeText: 'Wednesday 2:00 PM',
+                ),
+                SizedBox(height: 24),
+              ]),
             ),
           ],
         ),
@@ -102,10 +94,7 @@ class _DashboardHeader extends StatelessWidget {
           width: double.infinity,
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                Color(0xFF0F68FF),
-                Color(0xFF01B67A),
-              ],
+              colors: [Color(0xFF0F68FF), Color(0xFF01B67A)],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),
@@ -126,13 +115,10 @@ class _DashboardHeader extends StatelessWidget {
                     children: [
                       // avatar
                       const CircleAvatar(
-                    radius: 20,
-                    backgroundColor: Colors.white,
-                    child: Icon(
-                    Icons.person,
-                    color: Color(0xFF0F68FF),
-                    ),
-                    ),
+                        radius: 20,
+                        backgroundColor: Colors.white,
+                        child: Icon(Icons.person, color: Color(0xFF0F68FF)),
+                      ),
 
                       const SizedBox(width: 12),
                       Column(
@@ -152,7 +138,7 @@ class _DashboardHeader extends StatelessWidget {
                               vertical: 3,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Colors.white.withAlpha(51),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
@@ -170,7 +156,7 @@ class _DashboardHeader extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.14),
+                      color: Colors.white.withAlpha(36),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
@@ -235,7 +221,7 @@ class _StatCard extends StatelessWidget {
       width: 100,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.15),
+        color: Colors.white.withAlpha(38),
         borderRadius: BorderRadius.circular(14),
       ),
       child: Column(
@@ -254,10 +240,7 @@ class _StatCard extends StatelessWidget {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 11,
-            ),
+            style: const TextStyle(color: Colors.white, fontSize: 11),
           ),
         ],
       ),
@@ -287,7 +270,7 @@ class _QuickActionsCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withAlpha(10),
             offset: const Offset(0, 6),
             blurRadius: 18,
           ),
@@ -298,10 +281,7 @@ class _QuickActionsCard extends StatelessWidget {
         children: [
           const Text(
             'Quick Actions',
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 15,
-            ),
+            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
           ),
           const SizedBox(height: 14),
           Row(
@@ -327,7 +307,7 @@ class _QuickActionsCard extends StatelessWidget {
                               color: Colors.white,
                               fontWeight: FontWeight.w600,
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -342,17 +322,18 @@ class _QuickActionsCard extends StatelessWidget {
                     height: 54,
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      border: Border.all(
-                        color: const Color(0xFFE5E8EC),
-                      ),
+                      border: Border.all(color: const Color(0xFFE5E8EC)),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: const Center(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.emoji_events_outlined,
-                              color: Color(0xFF0F68FF), size: 18),
+                          Icon(
+                            Icons.emoji_events_outlined,
+                            color: Color(0xFF0F68FF),
+                            size: 18,
+                          ),
                           SizedBox(width: 6),
                           Text(
                             'Leaderboard',
@@ -360,7 +341,7 @@ class _QuickActionsCard extends StatelessWidget {
                               color: Color(0xFF0F68FF),
                               fontWeight: FontWeight.w600,
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -392,10 +373,7 @@ class _RecentActivityHeader extends StatelessWidget {
         children: [
           const Text(
             'Recent Activity',
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 15,
-            ),
+            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
           ),
           TextButton(
             onPressed: onViewAll,
@@ -411,7 +389,7 @@ class _RecentActivityHeader extends StatelessWidget {
                 fontWeight: FontWeight.w500,
               ),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -477,10 +455,7 @@ class _RecentActivityTile extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   '$studentsCount students',
-                  style: TextStyle(
-                    color: Colors.grey.shade500,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
                 ),
               ],
             ),
@@ -490,10 +465,12 @@ class _RecentActivityTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
-                  color: _statusColor.withOpacity(0.12),
+                  color: _statusColor.withAlpha(31),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -508,13 +485,10 @@ class _RecentActivityTile extends StatelessWidget {
               const SizedBox(height: 6),
               Text(
                 timeText,
-                style: TextStyle(
-                  color: Colors.grey.shade500,
-                  fontSize: 11,
-                ),
+                style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
               ),
             ],
-          )
+          ),
         ],
       ),
     );
@@ -534,23 +508,16 @@ class _StudentBottomNavBar extends StatelessWidget {
       currentIndex: currentIndex,
       onTap: (index) {
         // TODO: hook to your main navigation
-          if (index == 0) {
+        if (index == 0) {
           Navigator.pushNamed(context, '/student/dashboard');
         } else if (index == 2) {
           Navigator.pushNamed(context, '/student/profile');
-      }
-
+        }
       },
 
       items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home_outlined),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.history),
-          label: 'History',
-        ),
+        BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
+        BottomNavigationBarItem(icon: Icon(Icons.history), label: 'History'),
         BottomNavigationBarItem(
           icon: Icon(Icons.person_outline),
           label: 'Profile',
