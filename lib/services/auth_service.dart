@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../models/users_model.dart';
 import 'firestore_service.dart';
 
-
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -40,7 +39,7 @@ class AuthService {
 
       // Step 4: Send verification email
       await user.sendEmailVerification();
-      
+
       // Step 5: Validate role selection (service layer should not use BuildContext)
       if (isStudent == null) {
         throw FirebaseAuthException(
@@ -95,7 +94,7 @@ class AuthService {
           message: 'No user found for that email.',
         );
       }
-       await user.reload();
+      await user.reload();
       user = _auth.currentUser; // refresh reference
 
       if (user != null) {

@@ -1,22 +1,20 @@
+import 'package:classbizz_app/screens/aunthentication/home_screen.dart';
+import 'package:classbizz_app/screens/shared/session_screen.dart';
+import 'package:classbizz_app/screens/student/student_dashboard_screen.dart';
+import 'package:classbizz_app/screens/lecturer/lecturer_dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'screens/aunthentication/signup_screen.dart';
+import 'screens/aunthentication/login_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
-
-import 'firebase_options.dart';
 import 'providers/auth_provider.dart';
-import 'screens/authentication/home_screen.dart';
-import 'screens/authentication/signup_screen.dart';
-import 'screens/authentication/login_screen.dart';
-import 'screens/authentication/email_verifictaion_screen.dart';
-import 'screens/shared/session_screen.dart';
-import 'screens/student/student_dashboard_screen.dart';
-import 'screens/lecturer/lecturer_dashboard_screen.dart';
+import 'screens/aunthentication/email_verifictaion_screen.dart';
 
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
   runApp(
     MultiProvider(
       providers: [
@@ -35,11 +33,6 @@ class ClassBizzApp extends StatelessWidget {
     return MaterialApp(
       title: 'ClassBizz',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        fontFamily: 'Poppins',
-        useMaterial3: true,
-      ),
       initialRoute: '/',
       routes: {
         '/': (context) => const AuthWrapper(),

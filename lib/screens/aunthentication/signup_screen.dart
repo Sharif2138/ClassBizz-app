@@ -20,7 +20,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
 
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -129,11 +128,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       : () async {
                           if (!formKey.currentState!.validate()) return;
 
-
                           final authProvider = context.read<AuthProvider>();
 
                           // Call signUp and wait for completion
-
                           await authProvider.signUp(
                             _nameController.text.trim(),
                             _emailController.text.trim(),
@@ -141,18 +138,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             isStudent,
                           );
 
-
                           // Check if there was an error
                           if (authProvider.errorMessage != null) {
                             if (mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(authProvider.errorMessage!)),
+                                SnackBar(
+                                  content: Text(authProvider.errorMessage!),
+                                ),
                               );
                               authProvider.clearError();
                             }
-
                           } else {
-                            navigator.pop();
+                            // Successful signup
+                            if (mounted) {
+                              Navigator.pop(context);
+                            }
                           }
                         },
                   style: ElevatedButton.styleFrom(
