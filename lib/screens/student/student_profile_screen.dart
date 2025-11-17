@@ -15,7 +15,10 @@ class StudentProfileScreen extends StatelessWidget {
             const Divider(height: 1),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 18,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -122,30 +125,24 @@ class _ProfileHeader extends StatelessWidget {
           children: [
             const Text(
               'Alex Johnson',
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 16,
-              ),
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
             ),
             Text(
               'Student • ALU Kigali',
-              style: TextStyle(
-                color: Colors.grey.shade600,
-                fontSize: 12,
-              ),
+              style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
             ),
             const SizedBox(height: 3),
             Row(
               children: [
-                Icon(Icons.shield_moon_outlined,
-                    color: Colors.grey.shade500, size: 14),
+                Icon(
+                  Icons.shield_moon_outlined,
+                  color: Colors.grey.shade500,
+                  size: 14,
+                ),
                 const SizedBox(width: 4),
                 Text(
                   'Member since 2025',
-                  style: TextStyle(
-                    color: Colors.grey.shade500,
-                    fontSize: 11,
-                  ),
+                  style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
                 ),
               ],
             ),
@@ -228,22 +225,13 @@ class _StatCard extends StatelessWidget {
           const Spacer(),
           Text(
             value,
-            style: const TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: 18,
-            ),
+            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
           ),
           const SizedBox(height: 2),
-          Text(
-            title,
-            style: const TextStyle(fontSize: 12),
-          ),
+          Text(title, style: const TextStyle(fontSize: 12)),
           Text(
             subtitle,
-            style: TextStyle(
-              color: Colors.grey.shade500,
-              fontSize: 10,
-            ),
+            style: TextStyle(color: Colors.grey.shade500, fontSize: 10),
           ),
         ],
       ),
@@ -286,19 +274,12 @@ class _SessionHistoryTile extends StatelessWidget {
             color: Color(0xFFE9F0FF),
             shape: BoxShape.circle,
           ),
-          child:
-              const Icon(Icons.book_outlined, color: Color(0xFF0F68FF)),
+          child: const Icon(Icons.book_outlined, color: Color(0xFF0F68FF)),
         ),
-        title: Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.w600),
-        ),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
         subtitle: Text(
           date,
-          style: TextStyle(
-            color: Colors.grey.shade500,
-            fontSize: 12,
-          ),
+          style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
         ),
         trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -306,14 +287,11 @@ class _SessionHistoryTile extends StatelessWidget {
           children: [
             Text(
               '+$points pts',
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 4),
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
               decoration: BoxDecoration(
                 color: _statusColor.withOpacity(0.12),
                 borderRadius: BorderRadius.circular(20),
