@@ -1,3 +1,4 @@
+import 'package:classbizz_app/screens/aunthentication/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
@@ -90,10 +91,17 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                     const SizedBox(width: 8.0),
                     TextButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, '/login');
+                        context.read<AuthProvider>().refreshUser();
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginScreen(),
+                          ),
+                        );
+                        
                       },
                       child: const Text(
-                        'Login',
+                        'Reload',
                         style: TextStyle(fontSize: 16),
                       ),
                     ),

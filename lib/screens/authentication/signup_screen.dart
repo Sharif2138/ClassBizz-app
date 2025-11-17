@@ -20,16 +20,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
 
-    // Show error messages as SnackBar
-    if (auth.errorMessage != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(auth.errorMessage!)));
-        // auth.clearError(); // reset after showing
-      });
-    }
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -149,7 +139,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             _passwordController.text.trim(),
                             isStudent,
                           );
-
                           // After awaiting, ensure widget is still mounted before using UI
                           if (!mounted) return;
 
