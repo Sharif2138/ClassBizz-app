@@ -138,24 +138,31 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       : () async {
                           if (!formKey.currentState!.validate()) return;
 
-                          await context.read<AuthProvider>().signUp(
+                          // Capture UI handlers and provider before the async gap
+                          final messenger = ScaffoldMessenger.of(context);
+                          final navigator = Navigator.of(context);
+                          final authProvider = context.read<AuthProvider>();
+
+                          await authProvider.signUp(
                             _nameController.text.trim(),
                             _emailController.text.trim(),
                             _passwordController.text.trim(),
                             isStudent,
                           );
 
-                          // Show errors if any
-                          if (auth.errorMessage != null) {
-                            if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(auth.errorMessage!)),
-                              );
-                              auth.clearError();
-                            }
+                          // After awaiting, ensure widget is still mounted before using UI
+                          if (!mounted) return;
+
+                          final currentAuth = authProvider;
+                          if (currentAuth.errorMessage != null) {
+                            messenger.showSnackBar(
+                              SnackBar(
+                                content: Text(currentAuth.errorMessage!),
+                              ),
+                            );
+                            currentAuth.clearError();
                           } else {
-                            // On success navigate back or to login
-                            if (mounted) Navigator.pop(context);
+                            navigator.pop();
                           }
                         },
                   style: ElevatedButton.styleFrom(

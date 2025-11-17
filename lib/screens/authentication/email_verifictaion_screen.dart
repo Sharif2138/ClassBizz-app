@@ -2,9 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 
-class EmailVerificationScreen extends StatelessWidget {
+class EmailVerificationScreen extends StatefulWidget {
   const EmailVerificationScreen({super.key});
 
+  @override
+  State<EmailVerificationScreen> createState() =>
+      _EmailVerificationScreenState();
+}
+
+class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   @override
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
@@ -42,15 +48,24 @@ class EmailVerificationScreen extends StatelessWidget {
               const SizedBox(height: 32),
               ElevatedButton.icon(
                 onPressed: () async {
+                  final messenger = ScaffoldMessenger.of(context);
+                  final user = auth.user;
+                  if (user == null) {
+                    messenger.showSnackBar(
+                      const SnackBar(content: Text('No authenticated user')),
+                    );
+                    return;
+                  }
+
                   try {
-                    await auth.user!.sendEmailVerification();
-                    ScaffoldMessenger.of(context).showSnackBar(
+                    await user.sendEmailVerification();
+                    messenger.showSnackBar(
                       const SnackBar(
                         content: Text('Verification email resent!'),
                       ),
                     );
                   } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
+                    messenger.showSnackBar(
                       SnackBar(content: Text('Failed to send email: $e')),
                     );
                   }
@@ -68,8 +83,11 @@ class EmailVerificationScreen extends StatelessWidget {
               Center(
                 child: Row(
                   children: [
-                    Text('Finished Verifying?', style: TextStyle(fontSize: 16)),
-                    SizedBox(width: 8.0),
+                    const Text(
+                      'Finished Verifying?',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(width: 8.0),
                     TextButton(
                       onPressed: () {
                         Navigator.pushNamed(context, '/login');

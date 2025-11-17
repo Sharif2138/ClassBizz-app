@@ -13,6 +13,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -60,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: 30),
 
             // Email field
-            const TextField(
+            TextField(
               decoration: InputDecoration(
                 labelText: 'Email Address',
                 prefixIcon: Icon(Icons.email_outlined),
@@ -70,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: 16),
 
             // Password field
-            const TextField(
+            TextField(
               obscureText: true,
               decoration: InputDecoration(
                 labelText: 'Password',
