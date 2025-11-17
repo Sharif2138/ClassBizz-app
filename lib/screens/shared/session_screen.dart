@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-
+import 'flu';
 void main() {
   runApp(ClassSessionApp());
 }
@@ -349,7 +348,6 @@ class _HomeScreenState extends State<HomeScreen> {
       return;
     }
 
-    // Navigate to class session screen
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Starting class: $classCode'),
@@ -357,7 +355,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
     
-    // In a real app, you would navigate to the class session screen
-    // Navigator.push(context, MaterialPageRoute(builder: (context) => ClassSessionScreen(classCode: classCode)));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => ClassSessionScreen(classCode: classCode)));
   }
 }
