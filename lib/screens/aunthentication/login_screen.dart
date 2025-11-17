@@ -1,17 +1,16 @@
+import 'package:classbizz_app/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../providers/auth_provider.dart';
 
-class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _LoginScreenState extends State<LoginScreen> {
   final formKey = GlobalKey<FormState>();
-  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool isStudent = true;
@@ -20,7 +19,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
 
-    // Show error messages as SnackBar
     if (auth.errorMessage != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(
@@ -42,62 +40,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Form(
-          key: formKey,
+          key: formKey, 
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 20),
               const Text(
-                'Create Account',
+                'Welcome Back',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 30),
-
-              const Text('I am a', style: TextStyle(fontSize: 16)),
-              const SizedBox(height: 10),
-
-              Row(
-                children: [
-                  Expanded(
-                    child: _RoleButton(
-                      title: 'Student',
-                      isActive: isStudent,
-                      icon: Icons.school,
-                      onTap: () => setState(() => isStudent = true),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _RoleButton(
-                      title: 'Facilitator',
-                      isActive: !isStudent,
-                      icon: Icons.person,
-                      onTap: () => setState(() => isStudent = false),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 30),
-
-              // Name
-              TextFormField(
-                controller: _nameController,
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Name is required' : null,
-                decoration: const InputDecoration(
-                  labelText: 'Full Name',
-                  prefixIcon: Icon(Icons.person_outline),
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
 
               // Email
               TextFormField(
                 controller: _emailController,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Email is required';
+                    return 'Please enter your email';
                   }
                   final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
                   if (!emailRegex.hasMatch(value)) {
@@ -116,19 +74,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
               // Password
               TextFormField(
                 controller: _passwordController,
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Password is required'
-                    : null,
                 obscureText: true,
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Enter your password'
+                    : null,
                 decoration: const InputDecoration(
                   labelText: 'Password',
                   prefixIcon: Icon(Icons.lock_outline),
                   border: OutlineInputBorder(),
                 ),
               ),
+
               const SizedBox(height: 30),
 
-              // Sign Up button
+              // Login Button
               SizedBox(
                 width: double.infinity,
                 height: 50,
@@ -138,23 +97,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       : () async {
                           if (!formKey.currentState!.validate()) return;
 
-                          await context.read<AuthProvider>().signUp(
-                            _nameController.text.trim(),
+
+                          //  wait for completion
+                          await context.read<AuthProvider>().signIn(
                             _emailController.text.trim(),
                             _passwordController.text.trim(),
-                            isStudent,
                           );
 
-                          // Show errors if any
+                          // Check for errors
                           if (auth.errorMessage != null) {
                             if (mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(auth.errorMessage!)),
+                                SnackBar(
+                                  content: Text(auth.errorMessage!),
+                                ),
                               );
-                              auth.clearError();
+                              context.read<AuthProvider>().clearError();
                             }
                           } else {
-                            // On success navigate back or to login
+                            // Successful login
                             if (mounted) Navigator.pop(context);
                           }
                         },
@@ -167,11 +128,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   child: auth.isLoading
                       ? const CircularProgressIndicator(color: Colors.white)
                       : const Text(
-                          'Sign Up',
+                          'Login',
                           style: TextStyle(
-                            color: Colors.white,
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
+                            color: Colors.white,
                           ),
                         ),
                 ),
@@ -179,72 +140,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
               const SizedBox(height: 20),
 
-              // Login navigation
               Center(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('Already have an account? '),
+                    const Text('Don’t have an account?'),
                     TextButton(
                       onPressed: () {
-                        Navigator.pushReplacementNamed(context, '/login');
+                        Navigator.pushReplacementNamed(context, '/signup');
                       },
-                      child: const Text('Login'),
+                      child: const Text("Sign Up"),
                     ),
                   ],
                 ),
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _RoleButton extends StatelessWidget {
-  final String title;
-  final bool isActive;
-  final IconData icon;
-  final VoidCallback onTap;
-
-  const _RoleButton({
-    required this.title,
-    required this.isActive,
-    required this.icon,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 55,
-        decoration: BoxDecoration(
-          color: isActive ? Colors.blueAccent.withAlpha(26) : Colors.white,
-          border: Border.all(
-            color: isActive ? Colors.blueAccent : Colors.grey.shade300,
-          ),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              color: isActive ? Colors.blueAccent : Colors.grey,
-              size: 22,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              title,
-              style: TextStyle(
-                fontWeight: FontWeight.w500,
-                color: isActive ? Colors.blueAccent : Colors.grey,
-              ),
-            ),
-          ],
         ),
       ),
     );
