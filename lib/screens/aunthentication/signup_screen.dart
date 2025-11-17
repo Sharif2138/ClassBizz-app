@@ -26,7 +26,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(auth.errorMessage!)));
-        auth.errorMessage = null; // reset after showing
+        // auth.clearError(); // reset after showing
       });
     }
 
@@ -133,17 +133,34 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: auth.isLoading
+                  onPressed:  auth.isLoading
                       ? null
-                      : () {
+                      : () async {
                           if (!formKey.currentState!.validate()) return;
-                          auth.signUp(
+
+                          // Call signUp and wait for completion
+                          await context.read<AuthProvider>().signUp(
                             _nameController.text.trim(),
                             _emailController.text.trim(),
                             _passwordController.text.trim(),
                             isStudent,
                           );
-                        Navigator.pop(context);
+
+                          // Check if there was an error
+                          if (auth.errorMessage != null) {
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(auth.errorMessage!)),
+                              );
+                              auth.clearError();
+                              context.read<AuthProvider>().clearError();
+                            }
+                          } else {
+                            // Successful signup
+                            if (mounted) {
+                              Navigator.pop(context);
+                            }
+                          }
                         },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blueAccent,
