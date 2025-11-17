@@ -20,15 +20,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
 
-    // Show error messages as SnackBar
-    if (auth.errorMessage != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(auth.errorMessage!)));
-        // auth.clearError(); // reset after showing
-      });
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -138,10 +129,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       : () async {
                           if (!formKey.currentState!.validate()) return;
 
-                          // Capture UI handlers and provider before the async gap
-                          final messenger = ScaffoldMessenger.of(context);
-                          final navigator = Navigator.of(context);
+
                           final authProvider = context.read<AuthProvider>();
+
+                          // Call signUp and wait for completion
 
                           await authProvider.signUp(
                             _nameController.text.trim(),
@@ -150,17 +141,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             isStudent,
                           );
 
-                          // After awaiting, ensure widget is still mounted before using UI
-                          if (!mounted) return;
 
-                          final currentAuth = authProvider;
-                          if (currentAuth.errorMessage != null) {
-                            messenger.showSnackBar(
-                              SnackBar(
-                                content: Text(currentAuth.errorMessage!),
-                              ),
-                            );
-                            currentAuth.clearError();
+                          // Check if there was an error
+                          if (authProvider.errorMessage != null) {
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(authProvider.errorMessage!)),
+                              );
+                              authProvider.clearError();
+                            }
+
                           } else {
                             navigator.pop();
                           }
