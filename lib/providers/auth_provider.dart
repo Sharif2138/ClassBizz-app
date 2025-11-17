@@ -1,4 +1,4 @@
-import 'package:classbizz_app/screens/services/auth_service.dart';
+import 'package:classbizz_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -49,6 +49,12 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
 }
   }
+
+  void clearError() {
+    errorMessage = null;
+    notifyListeners();
+  }
+
     
   }
 

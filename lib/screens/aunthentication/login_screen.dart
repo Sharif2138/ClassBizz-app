@@ -19,6 +19,15 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
 
+    if (auth.errorMessage != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(auth.errorMessage!)));
+        // auth.clearError(); // reset after showing
+      });
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -85,14 +94,30 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: ElevatedButton(
                   onPressed: auth.isLoading
                       ? null
-                      : () {
+                      : () async {
                           if (!formKey.currentState!.validate()) return;
 
-                          auth.signIn(
+
+                          //  wait for completion
+                          await context.read<AuthProvider>().signIn(
                             _emailController.text.trim(),
                             _passwordController.text.trim(),
                           );
-                          Navigator.pop(context);
+
+                          // Check for errors
+                          if (auth.errorMessage != null) {
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(auth.errorMessage!),
+                                ),
+                              );
+                              context.read<AuthProvider>().clearError();
+                            }
+                          } else {
+                            // Successful login
+                            if (mounted) Navigator.pop(context);
+                          }
                         },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blueAccent,
