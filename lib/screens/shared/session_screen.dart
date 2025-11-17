@@ -1,4 +1,5 @@
-import 'flu';
+import 'package:flutter/material.dart';
+
 void main() {
   runApp(ClassSessionApp());
 }
@@ -18,6 +19,8 @@ class ClassSessionApp extends StatelessWidget {
 }
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
