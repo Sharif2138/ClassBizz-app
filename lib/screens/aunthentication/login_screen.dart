@@ -19,15 +19,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
 
-    if (auth.errorMessage != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(auth.errorMessage!)));
-        // auth.clearError(); // reset after showing
-      });
-    }
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -40,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Form(
-          key: formKey, 
+          key: formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -97,26 +88,27 @@ class _LoginScreenState extends State<LoginScreen> {
                       : () async {
                           if (!formKey.currentState!.validate()) return;
 
+                          final authProvider = context.read<AuthProvider>();
 
-                          //  wait for completion
-                          await context.read<AuthProvider>().signIn(
+                          await authProvider.signIn(
                             _emailController.text.trim(),
                             _passwordController.text.trim(),
                           );
 
-                          // Check for errors
-                          if (auth.errorMessage != null) {
+                          if (authProvider.errorMessage != null) {
                             if (mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text(auth.errorMessage!),
+                                  content: Text(authProvider.errorMessage!),
                                 ),
                               );
-                              context.read<AuthProvider>().clearError();
+                              authProvider.clearError();
                             }
                           } else {
                             // Successful login
-                            if (mounted) Navigator.pop(context);
+                            if (mounted) {
+                              Navigator.pushReplacementNamed(context, '/');
+                            }
                           }
                         },
                   style: ElevatedButton.styleFrom(

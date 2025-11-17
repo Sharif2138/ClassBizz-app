@@ -20,15 +20,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
 
-    // Show error messages as SnackBar
-    if (auth.errorMessage != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(auth.errorMessage!)));
-        // auth.clearError(); // reset after showing
-      });
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -138,8 +129,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       : () async {
                           if (!formKey.currentState!.validate()) return;
 
+                          final authProvider = context.read<AuthProvider>();
+
                           // Call signUp and wait for completion
-                          await context.read<AuthProvider>().signUp(
+                          await authProvider.signUp(
                             _nameController.text.trim(),
                             _emailController.text.trim(),
                             _passwordController.text.trim(),
@@ -147,13 +140,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           );
 
                           // Check if there was an error
-                          if (auth.errorMessage != null) {
+                          if (authProvider.errorMessage != null) {
                             if (mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(auth.errorMessage!)),
+                                SnackBar(content: Text(authProvider.errorMessage!)),
                               );
-                              auth.clearError();
-                              context.read<AuthProvider>().clearError();
+                              authProvider.clearError();
                             }
                           } else {
                             // Successful signup

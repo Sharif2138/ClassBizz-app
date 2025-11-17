@@ -95,14 +95,23 @@ class AuthService {
           message: 'No user found for that email.',
         );
       }
+       await user.reload();
+      user = _auth.currentUser; // refresh reference
 
-      if (user.emailVerified) {
-        return user;
+      if (user != null) {
+        if (user.emailVerified) {
+          return user;
+        } else {
+          await user.sendEmailVerification();
+          throw FirebaseAuthException(
+            code: 'email-not-verified',
+            message: 'Email not verified. Verification email sent.',
+          );
+        }
       } else {
-        await user.sendEmailVerification();
         throw FirebaseAuthException(
-          code: 'email-not-verified',
-          message: 'Email not verified. Verification email sent.',
+          code: 'user-not-found',
+          message: 'User not found after sign-in.',
         );
       }
     } on FirebaseAuthException catch (e) {
