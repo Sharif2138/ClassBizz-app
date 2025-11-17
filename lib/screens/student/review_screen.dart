@@ -38,7 +38,9 @@ class _ReviewScreenState extends State<ReviewScreen> {
   Future<void> _handleSubmit() async {
     if (_selectedRating == 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please rate the class before submitting.')),
+        const SnackBar(
+          content: Text('Please rate the class before submitting.'),
+        ),
       );
       return;
     }
@@ -78,7 +80,10 @@ class _ReviewScreenState extends State<ReviewScreen> {
             const Divider(height: 1),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 18,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -97,10 +102,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    _RatingBar(
-                      selected: _selectedRating,
-                      onTap: _onStarTap,
-                    ),
+                    _RatingBar(selected: _selectedRating, onTap: _onStarTap),
                     const SizedBox(height: 6),
                     Text(
                       _selectedRating == 0
@@ -133,8 +135,10 @@ class _ReviewScreenState extends State<ReviewScreen> {
                           hintText:
                               'What did you enjoy? Any suggestions for improvement?',
                           border: InputBorder.none,
-                          contentPadding:
-                              EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 14,
+                          ),
                           counterText: '',
                         ),
                         onChanged: (_) => setState(() {}),
@@ -203,8 +207,9 @@ class _ReviewScreenState extends State<ReviewScreen> {
                                 height: 18,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  valueColor:
-                                      AlwaysStoppedAnimation<Color>(Colors.white),
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
                                 ),
                               )
                             : const Text(
@@ -274,10 +279,7 @@ class _SessionSummaryCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [
-            Color(0xFFEAF1FF),
-            Color(0xFFE2FFF3),
-          ],
+          colors: [Color(0xFFEAF1FF), Color(0xFFE2FFF3)],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
         ),
@@ -288,26 +290,17 @@ class _SessionSummaryCard extends StatelessWidget {
         children: [
           Text(
             courseTitle,
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 15,
-            ),
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
           ),
           const SizedBox(height: 6),
           Text(
             'with $lecturerName',
-            style: TextStyle(
-              color: Colors.grey.shade700,
-              fontSize: 13,
-            ),
+            style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
           ),
           const SizedBox(height: 6),
           Text(
             'Session: $sessionCode • $sessionDate',
-            style: TextStyle(
-              color: Colors.grey.shade500,
-              fontSize: 12,
-            ),
+            style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
           ),
         ],
       ),
@@ -319,29 +312,23 @@ class _RatingBar extends StatelessWidget {
   final int selected;
   final ValueChanged<int> onTap;
 
-  const _RatingBar({
-    required this.selected,
-    required this.onTap,
-  });
+  const _RatingBar({required this.selected, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: List.generate(
-        5,
-        (index) {
-          final starIndex = index + 1;
-          final isSelected = starIndex <= selected;
-          return IconButton(
-            onPressed: () => onTap(starIndex),
-            icon: Icon(
-              isSelected ? Icons.star_rounded : Icons.star_border_rounded,
-              size: 34,
-              color: isSelected ? const Color(0xFFFFC940) : Colors.grey.shade400,
-            ),
-          );
-        },
-      ),
+      children: List.generate(5, (index) {
+        final starIndex = index + 1;
+        final isSelected = starIndex <= selected;
+        return IconButton(
+          onPressed: () => onTap(starIndex),
+          icon: Icon(
+            isSelected ? Icons.star_rounded : Icons.star_border_rounded,
+            size: 34,
+            color: isSelected ? const Color(0xFFFFC940) : Colors.grey.shade400,
+          ),
+        );
+      }),
     );
   }
 }
