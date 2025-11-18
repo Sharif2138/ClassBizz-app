@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'create_session_screen.dart';
 
 class LecturerHomeScreen extends StatelessWidget {
   const LecturerHomeScreen({super.key});
@@ -118,7 +119,14 @@ class LecturerHomeScreen extends StatelessWidget {
                           children: [
                             Expanded(
                               child: ElevatedButton.icon(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const CreateSessionScreen(),
+                                    ),
+                                  );
+                                },
                                 icon: const Icon(Icons.add, color: Colors.white),
                                 label: const Text(
                                   'Start Class',
