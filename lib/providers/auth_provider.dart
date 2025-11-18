@@ -16,19 +16,37 @@ class AuthProvider extends ChangeNotifier {
     });
   }
 
-  Future<void> signUp(String name, String email, String password, bool isStudent) async {
-  isLoading = true;
-  errorMessage = null;
-  notifyListeners();
+  Future<void> signUp(
+    String name,
+    String email,
+    String password,
+    bool isStudent,
+  ) async {
+    isLoading = true;
+    errorMessage = null;
+    notifyListeners();
 
-  try {
-     await _service.createUserWithEmailAndPassword(name, email, password, isStudent: isStudent);
-} catch (e) {
+    try {
+      // debug
+      print(
+        'AuthProvider.signUp: starting for email=$email isStudent=$isStudent',
+      );
+      await _service.createUserWithEmailAndPassword(
+        name,
+        email,
+        password,
+        isStudent: isStudent,
+      );
+      print(
+        'AuthProvider.signUp: createUserWithEmailAndPassword completed for email=$email',
+      );
+    } catch (e) {
+      print('AuthProvider.signUp: caught error: $e');
       errorMessage = e.toString();
-} finally {
+    } finally {
       isLoading = false;
       notifyListeners();
-}
+    }
   }
 
   Future<void> signOut() async {
@@ -37,17 +55,22 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> signIn(String email, String password) async {
-  isLoading = true;
-  notifyListeners();
+    isLoading = true;
+    notifyListeners();
 
-  try {
-  await _service.signInWithEmailAndPassword(email, password);
-} catch (e) {
+    try {
+      print('AuthProvider.signIn: starting for email=$email');
+      await _service.signInWithEmailAndPassword(email, password);
+      print(
+        'AuthProvider.signIn: signInWithEmailAndPassword completed for email=$email',
+      );
+    } catch (e) {
+      print('AuthProvider.signIn: caught error: $e');
       errorMessage = e.toString();
-} finally {
+    } finally {
       isLoading = false;
       notifyListeners();
-}
+    }
   }
 
   void clearError() {
@@ -63,8 +86,4 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
-
-
-    
-  }
-
+}

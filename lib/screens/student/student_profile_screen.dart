@@ -7,7 +7,7 @@ class StudentProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF6F7FB),
-      bottomNavigationBar: const _StudentBottomNavBar(currentIndex: 2),
+      // NOTE: no bottomNavigationBar here
       body: SafeArea(
         child: Column(
           children: [
@@ -100,7 +100,7 @@ class _ProfileTopBar extends StatelessWidget {
             'Profile',
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
           ),
-          const SizedBox(width: 48), // to balance the back button space
+          const SizedBox(width: 48),
         ],
       ),
     );
@@ -333,6 +333,7 @@ class _BadgeChip extends StatelessWidget {
   }
 }
 
+/// Clean, minimal student bottom nav bar (conflict-resolved)
 class _StudentBottomNavBar extends StatelessWidget {
   final int currentIndex;
   const _StudentBottomNavBar({required this.currentIndex});
@@ -342,11 +343,8 @@ class _StudentBottomNavBar extends StatelessWidget {
     return BottomNavigationBar(
       currentIndex: currentIndex,
       onTap: (index) {
-        if (index == 0) {
-          Navigator.popUntil(context, (route) => route.isFirst);
-        } else if (index == 2) {
-          // already here
-        }
+        // keep behavior minimal: navigate to root for Home, noop for others
+        if (index == 0) Navigator.popUntil(context, (route) => route.isFirst);
       },
       items: const [
         BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
