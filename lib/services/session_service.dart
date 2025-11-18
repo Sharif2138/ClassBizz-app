@@ -6,6 +6,7 @@ import 'dart:math';
 class SessionService {
   final FirestoreService _firestoreService = FirestoreService();
 
+  
   String generateCode() {
     const length = 6;
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -17,16 +18,17 @@ class SessionService {
     ).join();
   }
 
-  Future<void> createSession(
+ 
+  Future<SessionModel> createSession(
     String lecturerId,
     String name,
     String? topic,
     int? durationMinutes,
   ) async {
-    String code = generateCode();
+    final code = generateCode();
 
     final session = SessionModel(
-      sessionId: code, 
+      sessionId: code,
       lecturerId: lecturerId,
       name: name,
       code: code,
@@ -38,23 +40,40 @@ class SessionService {
     );
 
     await _firestoreService.saveSession(session);
+    return session; 
   }
 
-  Future<void> joinSession(String code, String studentId) async {
+    Future<SessionModel?> joinSession(String code, String studentId) async {
     final session = await _firestoreService.getSession(code);
 
     if (session == null) {
       throw Exception('Session not found');
     }
 
-    if (!session.attendees.contains(studentId)) {
-      await _firestoreService.updateSession(code, {
-        'attendees': FieldValue.arrayUnion([studentId]),
-      });
-    }
+    await _firestoreService.updateSession(code, {
+      'attendees': FieldValue.arrayUnion([studentId]),
+    });
+
+    return await _firestoreService.getSession(code);
   }
 
-  Future<void> endSession(String code) async {
+  
+  Future<SessionModel?> leaveSession(String code, String studentId) async {
+    final session = await _firestoreService.getSession(code);
+
+    if (session == null) {
+      throw Exception('Session not found');
+    }
+
+    await _firestoreService.updateSession(code, {
+      'attendees': FieldValue.arrayRemove([studentId]),
+    });
+
+    return await _firestoreService.getSession(code);
+  }
+
+  
+  Future<SessionModel?> endSession(String code) async {
     final session = await _firestoreService.getSession(code);
 
     if (session == null) {
@@ -62,19 +81,12 @@ class SessionService {
     }
 
     await _firestoreService.updateSession(code, {'status': 'ended'});
+
+    return await _firestoreService.getSession(code);
   }
 
-  Future<void> leaveSession(String code, String studentId) async {
-    final session = await _firestoreService.getSession(code);
-
-    if (session == null) {
-      throw Exception('Session not found');
-    }
-
-    if (session.attendees.contains(studentId)) {
-      await _firestoreService.updateSession(code, {
-        'attendees': FieldValue.arrayRemove([studentId]),
-      });
-    }
+  
+  Future<SessionModel?> getSession(String code) async {
+    return await _firestoreService.getSession(code);
   }
 }

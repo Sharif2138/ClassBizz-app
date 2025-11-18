@@ -11,6 +11,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'providers/auth_provider.dart';
 import 'screens/aunthentication/email_verifictaion_screen.dart';
+import 'providers/session_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +20,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider<AuthProvider>(create: (_) => AuthProvider()),
+        ChangeNotifierProvider<SessionProvider>(create: (_) => SessionProvider()),
       ],
       child: const ClassBizzApp(),
     ),
@@ -42,6 +44,7 @@ class ClassBizzApp extends StatelessWidget {
         '/login': (context) => const LoginScreen(),
         '/signup': (context) => const SignUpScreen(),
         '/email-verification': (context) => const EmailVerificationScreen(),
+        '/session': (context) => const SessionScreen(),
       },
     );
   }
