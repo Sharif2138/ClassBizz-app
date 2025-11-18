@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:classbizz_app/screens/lecturer_dashboard_screen.dart';
+import 'package:classbizz_app/screens/lecturer/lecturer_dashboard_screen.dart';
 
 void main() {
   runApp(const ClassBizz());
