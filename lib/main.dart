@@ -12,6 +12,10 @@ import 'package:provider/provider.dart';
 import 'providers/auth_provider.dart';
 import 'screens/aunthentication/email_verifictaion_screen.dart';
 import 'providers/session_provider.dart';
+import 'screens/student/student_bottom_nav.dart';
+import 'screens/student/join_session_screen.dart';
+import 'screens/shared/leaderboard_screen.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,6 +49,8 @@ class ClassBizzApp extends StatelessWidget {
         '/signup': (context) => const SignUpScreen(),
         '/email-verification': (context) => const EmailVerificationScreen(),
         '/session': (context) => const SessionScreen(),
+        '/student/join': (context) => const JoinSessionScreen(),
+        '/shared/leaderboard': (context) => const LeaderboardScreen(),
       },
     );
   }
@@ -83,7 +89,7 @@ class AuthWrapper extends StatelessWidget {
             final user = documentSnapshot.data!.data() as Map<String, dynamic>;
             final bool isStudent = user['isStudent'];
             if (isStudent == true) {
-              return const StudentDashboardScreen();
+              return const StudentBottomNav();
             } else {
               return const LecturerDashboardScreen();
             }

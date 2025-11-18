@@ -7,12 +7,10 @@ class StudentProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF6F7FB),
-      // NOTE: no bottomNavigationBar here
       body: SafeArea(
         child: Column(
           children: [
-            const _ProfileTopBar(),
-            const Divider(height: 1),
+            const Divider(height: 10),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(
@@ -82,30 +80,6 @@ class StudentProfileScreen extends StatelessWidget {
   }
 }
 
-class _ProfileTopBar extends StatelessWidget {
-  const _ProfileTopBar();
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 52,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
-          ),
-          const Text(
-            'Profile',
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(width: 48),
-        ],
-      ),
-    );
-  }
-}
 
 class _ProfileHeader extends StatelessWidget {
   const _ProfileHeader();

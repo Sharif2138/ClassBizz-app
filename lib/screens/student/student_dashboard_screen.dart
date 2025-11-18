@@ -6,7 +6,6 @@ class StudentDashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // NOTE: no bottomNavigationBar here anymore
       backgroundColor: const Color(0xFFF6F7FB),
       body: SafeArea(
         child: CustomScrollView(
@@ -16,14 +15,11 @@ class StudentDashboardScreen extends StatelessWidget {
             SliverToBoxAdapter(
               child: _QuickActionsCard(
                 onStartClass: () {
-                  // navigate to join/start session screen (route will be added in main.dart)
-                  // Example:
-                  // Navigator.pushNamed(context, '/student/join');
+                  Navigator.pushNamed(context, '/student/join');
                 },
-                onLeaderboard: () {
-                  // navigate to leaderboard screen (future)
-                  // Navigator.pushNamed(context, '/student/leaderboard');
-                },
+                // onLeaderboard: () {
+                //   Navigator.pushNamed(context, '/shared/leaderboard');
+                // },
               ),
             ),
             const SliverToBoxAdapter(child: SizedBox(height: 24)),
@@ -230,11 +226,9 @@ class _StatCard extends StatelessWidget {
 /// ---------------------------------------------------------------------------
 class _QuickActionsCard extends StatelessWidget {
   final VoidCallback onStartClass;
-  final VoidCallback onLeaderboard;
 
   const _QuickActionsCard({
     required this.onStartClass,
-    required this.onLeaderboard,
   });
 
   @override
@@ -292,39 +286,7 @@ class _QuickActionsCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              Expanded(
-                child: GestureDetector(
-                  onTap: onLeaderboard,
-                  child: Container(
-                    height: 54,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: const Color(0xFFE5E8EC)),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: const Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.emoji_events_outlined,
-                            color: Color(0xFF0F68FF),
-                            size: 18,
-                          ),
-                          SizedBox(width: 6),
-                          Text(
-                            'Leaderboard',
-                            style: TextStyle(
-                              color: Color(0xFF0F68FF),
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              
             ],
           ),
         ],
