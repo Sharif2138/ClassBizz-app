@@ -36,7 +36,7 @@ class ClassBizzApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const AuthWrapper(),
-        '/home': (context) => const HomeScreen(),
+        // '/home': (context) => const HomeScreen(),
         '/student/dashboard': (context) => const StudentDashboardScreen(),
         '/lecturer/dashboard': (context) => const LecturerDashboardScreen(),
         '/login': (context) => const LoginScreen(),
