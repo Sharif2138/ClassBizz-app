@@ -12,7 +12,6 @@ class _JoinSessionScreenState extends State<JoinSessionScreen> {
   String? _errorText;
   bool _isJoining = false;
 
-  // fake quick access data for now
   final List<_QuickClass> _quickClasses = const [
     _QuickClass(code: 'ADF301', title: 'Advanced Frontend Dev', status: 'Active'),
     _QuickClass(code: 'CS401', title: 'Data Structures', status: 'Active'),
@@ -39,17 +38,13 @@ class _JoinSessionScreenState extends State<JoinSessionScreen> {
       _errorText = null;
     });
 
-    // TODO: replace with real Firebase / API validation
+    // TODO: integrate with backend / Firebase
     await Future.delayed(const Duration(seconds: 1));
 
     setState(() {
       _isJoining = false;
     });
 
-    // if valid, navigate to the active session screen
-    // Navigator.pushNamed(context, '/student/session', arguments: code);
-
-    // for now, show a snackbar
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Joined session: $code')),
@@ -65,12 +60,11 @@ class _JoinSessionScreenState extends State<JoinSessionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // NOTE: no bottomNavigationBar here
       backgroundColor: const Color(0xFFF6F7FB),
-      bottomNavigationBar: const _StudentBottomNavBar(currentIndex: 0),
       body: SafeArea(
         child: Column(
           children: [
-            // top bar
             _TopBar(
               title: 'Start Class',
               onBack: () => Navigator.pop(context),
@@ -104,7 +98,7 @@ class _JoinSessionScreenState extends State<JoinSessionScreen> {
                         status: item.status,
                         onTap: () => _handleQuickJoin(item.code),
                       ),
-                    const SizedBox(height: 80),
+                    const SizedBox(height: 40),
                   ],
                 ),
               ),
@@ -116,17 +110,11 @@ class _JoinSessionScreenState extends State<JoinSessionScreen> {
   }
 }
 
-/// ---------------------------------------------------------------------------
-/// TOP BAR
-/// ---------------------------------------------------------------------------
 class _TopBar extends StatelessWidget {
   final String title;
   final VoidCallback onBack;
 
-  const _TopBar({
-    required this.title,
-    required this.onBack,
-  });
+  const _TopBar({required this.title, required this.onBack});
 
   @override
   Widget build(BuildContext context) {
@@ -138,13 +126,9 @@ class _TopBar extends StatelessWidget {
             onPressed: onBack,
             icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
           ),
-          const SizedBox(width: 2),
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w600,
-            ),
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
           ),
         ],
       ),
@@ -152,9 +136,6 @@ class _TopBar extends StatelessWidget {
   }
 }
 
-/// ---------------------------------------------------------------------------
-/// JOIN CARD
-/// ---------------------------------------------------------------------------
 class _JoinCard extends StatelessWidget {
   final TextEditingController controller;
   final String? errorText;
@@ -214,7 +195,6 @@ class _JoinCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          // input
           Container(
             decoration: BoxDecoration(
               color: const Color(0xFFF1F4F9),
@@ -288,9 +268,6 @@ class _JoinCard extends StatelessWidget {
   }
 }
 
-/// ---------------------------------------------------------------------------
-/// QUICK ACCESS TILE
-/// ---------------------------------------------------------------------------
 class _QuickAccessTile extends StatelessWidget {
   final String code;
   final String title;
@@ -369,37 +346,3 @@ class _QuickClass {
   });
 }
 
-/// ---------------------------------------------------------------------------
-/// REUSE SAME BOTTOM NAV STYLE AS DASHBOARD
-/// ---------------------------------------------------------------------------
-class _StudentBottomNavBar extends StatelessWidget {
-  final int currentIndex;
-  const _StudentBottomNavBar({required this.currentIndex});
-
-  @override
-  Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      currentIndex: currentIndex,
-      onTap: (index) {
-        // TODO: hook to your real nav
-        if (index == 0) {
-          Navigator.popUntil(context, (route) => route.isFirst);
-        }
-      },
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home_outlined),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.history),
-          label: 'History',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person_outline),
-          label: 'Profile',
-        ),
-      ],
-    );
-  }
-}
