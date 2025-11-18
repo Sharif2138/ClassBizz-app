@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:classbizz_app/screens/lecturer/lecturer_home_screen.dart';
+import 'package:classbizz_app/screens/lecturer_dashboard_screen.dart';
 
 void main() {
   runApp(const ClassBizz());
@@ -17,7 +17,7 @@ class ClassBizz extends StatelessWidget {
         
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const LecturerHomeScreen(),
+      home: const LecturerDashboardScreen(),
     );
   }
 }
