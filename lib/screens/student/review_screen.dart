@@ -12,7 +12,6 @@
 //   final TextEditingController _feedbackController = TextEditingController();
 //   final int _maxChars = 500;
 
-//   // quick feedback chips – pull from doc: clear explanations, engaging content, pace too fast, wanted more examples, safe space
 //   final List<_FeedbackTag> _tags = [
 //     _FeedbackTag(icon: Icons.check_circle_outline, label: 'Clear explanations'),
 //     _FeedbackTag(icon: Icons.lightbulb_outline, label: 'Engaging content'),
@@ -39,7 +38,9 @@
 //   Future<void> _handleSubmit() async {
 //     if (_selectedRating == 0) {
 //       ScaffoldMessenger.of(context).showSnackBar(
-//         const SnackBar(content: Text('Please rate the class before submitting.')),
+//         const SnackBar(
+//           content: Text('Please rate the class before submitting.'),
+//         ),
 //       );
 //       return;
 //     }
@@ -48,7 +49,7 @@
 //       _submitting = true;
 //     });
 
-//     // TODO: send to Firebase / API
+//     // TODO: send to backend / Firebase
 //     await Future.delayed(const Duration(seconds: 1));
 
 //     setState(() {
@@ -68,7 +69,7 @@
 //     final selectedCount = _feedbackController.text.length;
 //     return Scaffold(
 //       backgroundColor: const Color(0xFFF6F7FB),
-//       bottomNavigationBar: const _StudentBottomNavBar(currentIndex: 0),
+//       // NOTE: no bottomNavigationBar
 //       body: SafeArea(
 //         child: Column(
 //           children: [
@@ -79,7 +80,10 @@
 //             const Divider(height: 1),
 //             Expanded(
 //               child: SingleChildScrollView(
-//                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+//                 padding: const EdgeInsets.symmetric(
+//                   horizontal: 20,
+//                   vertical: 18,
+//                 ),
 //                 child: Column(
 //                   crossAxisAlignment: CrossAxisAlignment.start,
 //                   children: [
@@ -98,10 +102,7 @@
 //                       ),
 //                     ),
 //                     const SizedBox(height: 12),
-//                     _RatingBar(
-//                       selected: _selectedRating,
-//                       onTap: _onStarTap,
-//                     ),
+//                     _RatingBar(selected: _selectedRating, onTap: _onStarTap),
 //                     const SizedBox(height: 6),
 //                     Text(
 //                       _selectedRating == 0
@@ -131,9 +132,13 @@
 //                         maxLines: 5,
 //                         maxLength: _maxChars,
 //                         decoration: const InputDecoration(
-//                           hintText: 'What did you enjoy? Any suggestions for improvement?',
+//                           hintText:
+//                               'What did you enjoy? Any suggestions for improvement?',
 //                           border: InputBorder.none,
-//                           contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+//                           contentPadding: EdgeInsets.symmetric(
+//                             horizontal: 14,
+//                             vertical: 14,
+//                           ),
 //                           counterText: '',
 //                         ),
 //                         onChanged: (_) => setState(() {}),
@@ -165,7 +170,13 @@
 //                           .map(
 //                             (tag) => FilterChip(
 //                               label: Text(tag.label),
-//                               avatar: Icon(tag.icon, size: 16, color: tag.selected ? Colors.white : const Color(0xFF0F68FF)),
+//                               avatar: Icon(
+//                                 tag.icon,
+//                                 size: 16,
+//                                 color: tag.selected
+//                                     ? Colors.white
+//                                     : const Color(0xFF0F68FF),
+//                               ),
 //                               selected: tag.selected,
 //                               selectedColor: const Color(0xFF0F68FF),
 //                               checkmarkColor: Colors.white,
@@ -196,7 +207,9 @@
 //                                 height: 18,
 //                                 child: CircularProgressIndicator(
 //                                   strokeWidth: 2,
-//                                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+//                                   valueColor: AlwaysStoppedAnimation<Color>(
+//                                     Colors.white,
+//                                   ),
 //                                 ),
 //                               )
 //                             : const Text(
@@ -266,10 +279,7 @@
 //       padding: const EdgeInsets.all(16),
 //       decoration: BoxDecoration(
 //         gradient: const LinearGradient(
-//           colors: [
-//             Color(0xFFEAF1FF),
-//             Color(0xFFE2FFF3),
-//           ],
+//           colors: [Color(0xFFEAF1FF), Color(0xFFE2FFF3)],
 //           begin: Alignment.centerLeft,
 //           end: Alignment.centerRight,
 //         ),
@@ -280,26 +290,17 @@
 //         children: [
 //           Text(
 //             courseTitle,
-//             style: const TextStyle(
-//               fontWeight: FontWeight.w600,
-//               fontSize: 15,
-//             ),
+//             style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
 //           ),
 //           const SizedBox(height: 6),
 //           Text(
 //             'with $lecturerName',
-//             style: TextStyle(
-//               color: Colors.grey.shade700,
-//               fontSize: 13,
-//             ),
+//             style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
 //           ),
 //           const SizedBox(height: 6),
 //           Text(
 //             'Session: $sessionCode • $sessionDate',
-//             style: TextStyle(
-//               color: Colors.grey.shade500,
-//               fontSize: 12,
-//             ),
+//             style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
 //           ),
 //         ],
 //       ),
@@ -311,29 +312,23 @@
 //   final int selected;
 //   final ValueChanged<int> onTap;
 
-//   const _RatingBar({
-//     required this.selected,
-//     required this.onTap,
-//   });
+//   const _RatingBar({required this.selected, required this.onTap});
 
 //   @override
 //   Widget build(BuildContext context) {
 //     return Row(
-//       children: List.generate(
-//         5,
-//         (index) {
-//           final starIndex = index + 1;
-//           final isSelected = starIndex <= selected;
-//           return IconButton(
-//             onPressed: () => onTap(starIndex),
-//             icon: Icon(
-//               isSelected ? Icons.star_rounded : Icons.star_border_rounded,
-//               size: 34,
-//               color: isSelected ? const Color(0xFFFFC940) : Colors.grey.shade400,
-//             ),
-//           );
-//         },
-//       ),
+//       children: List.generate(5, (index) {
+//         final starIndex = index + 1;
+//         final isSelected = starIndex <= selected;
+//         return IconButton(
+//           onPressed: () => onTap(starIndex),
+//           icon: Icon(
+//             isSelected ? Icons.star_rounded : Icons.star_border_rounded,
+//             size: 34,
+//             color: isSelected ? const Color(0xFFFFC940) : Colors.grey.shade400,
+//           ),
+//         );
+//       }),
 //     );
 //   }
 // }
@@ -346,23 +341,6 @@
 //   _FeedbackTag({
 //     required this.icon,
 //     required this.label,
+//     this.selected = false,
 //   });
-// }
-
-// class _StudentBottomNavBar extends StatelessWidget {
-//   final int currentIndex;
-//   const _StudentBottomNavBar({required this.currentIndex});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return BottomNavigationBar(
-//       currentIndex: currentIndex,
-//       items: const [
-//         BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
-//         BottomNavigationBarItem(icon: Icon(Icons.history), label: 'History'),
-//         BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profile'),
-//       ],
-//       onTap: (_) {},
-//     );
-//   }
 // }
