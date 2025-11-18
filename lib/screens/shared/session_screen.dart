@@ -9,14 +9,13 @@ class SessionScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          // Gradient Header
+          // Gradient Header with Stats Cards
           Container(
-            height: 200,
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [Color(0xFF4A90E2), Color(0xFF50E3C2)],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
             ),
             child: SafeArea(
@@ -53,15 +52,16 @@ class SessionScreen extends StatelessWidget {
                         fontSize: 14,
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 30),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        _buildStatColumn('5', 'Students', Icons.people),
-                        _buildStatColumn('38', 'Avg Points', Icons.emoji_events),
-                        _buildStatColumn('Live', 'Session', Icons.circle, isLive: true),
+                        _buildStatCard('5', 'Students', Icons.people),
+                        _buildStatCard('38', 'Avg Points', Icons.emoji_events),
+                        _buildStatCard('Live', 'Session', Icons.circle, isLive: true),
                       ],
                     ),
+                    const SizedBox(height: 30),
                   ],
                 ),
               ),
@@ -69,82 +69,98 @@ class SessionScreen extends StatelessWidget {
           ),
           
           // Current Leaders Section
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
+          Container(
+            color: Colors.white,
+            child: Column(
               children: [
-                const Icon(Icons.emoji_events, color: Colors.orange),
-                const SizedBox(width: 8),
-                const Text(
-                  'Current Leaders',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.emoji_events, color: Colors.orange),
+                      const SizedBox(width: 8),
+                      const Text(
+                        'Current Leaders',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
-          
-          // Top 3 Leaders
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildTopLeader('AU', 'Alex', 2),
-                _buildTopLeader('GN', 'Grace', 1),
-                _buildTopLeader('JN', 'John', 3),
+                
+                // Top 3 Leaders
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildTopLeader('AU', 'Alex', 45, Color(0xFF4A90E2)),
+                      _buildTopLeader('GN', 'Grace', 42, Color(0xFF50E3C2)),
+                      _buildTopLeader('JN', 'John', 38, Color(0xFF50E3C2)),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
               ],
             ),
           ),
           
           const SizedBox(height: 20),
           
-          // Leaderboard Grid
+          // Leaderboard Grid with End Class Button Overlay
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: GridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-                childAspectRatio: 1.2,
-                children: [
-                  _buildLeaderboardCard('AU', 'Alex Uwimana', 45, Color(0xFF4A90E2)),
-                  _buildLeaderboardCard('GN', 'Grace Nsabimana', 42, Color(0xFF50E3C2)),
-                  _buildLeaderboardCard('JN', 'John Nzeyimana', 38, Color(0xFF4A90E2)),
-                  _buildLeaderboardCard('MU', 'Marie Uwimeza', 35, Color(0xFF50E3C2)),
-                ],
-              ),
-            ),
-          ),
-          
-          // End Class Button
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: SizedBox(
-              width: 200,
-              child: ElevatedButton(
-                onPressed: () {
-                  _showEndSessionDialog(context);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: GridView.count(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    childAspectRatio: 1.2,
+                    children: [
+                      _buildLeaderboardCard('AU', 'Alex Uwimana', 45, Color(0xFF4A90E2)),
+                      _buildLeaderboardCard('GN', 'Grace Nsabimana', 42, Color(0xFF50E3C2)),
+                      _buildLeaderboardCard('JN', 'John Nzeyimana', 38, Color(0xFF4A90E2)),
+                      _buildLeaderboardCard('MU', 'Marie Uwimeza', 35, Color(0xFF50E3C2)),
+                    ],
                   ),
                 ),
-                child: const Text(
-                  'End Class',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
+                
+                // End Class Button Positioned Over Bottom Cards
+                Positioned(
+                  bottom: 40,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: SizedBox(
+                      width: 120,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          _showEndSessionDialog(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                        child: const Text(
+                          'End Class',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
           ),
           
@@ -154,66 +170,83 @@ class SessionScreen extends StatelessWidget {
     );
   }
   
-  Widget _buildStatColumn(String value, String label, IconData icon, {bool isLive = false}) {
-    return Column(
-      children: [
-        Icon(icon, color: Colors.white, size: 24),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Text(
-          label,
-          style: const TextStyle(
-            color: Colors.white70,
-            fontSize: 12,
-          ),
-        ),
-        if (isLive)
-          Container(
-            margin: const EdgeInsets.only(top: 4),
-            width: 8,
-            height: 8,
-            decoration: const BoxDecoration(
-              color: Colors.green,
-              shape: BoxShape.circle,
+  Widget _buildStatCard(String value, String label, IconData icon, {bool isLive = false}) {
+    return Container(
+      width: 100,
+      height: 100,
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: Colors.white, size: 24),
+          const SizedBox(height: 8),
+          Text(
+            value,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
             ),
           ),
-      ],
+          Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+            ),
+          ),
+          if (isLive)
+            Container(
+              margin: const EdgeInsets.only(top: 4),
+              width: 8,
+              height: 8,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+            ),
+        ],
+      ),
     );
   }
   
-  Widget _buildTopLeader(String initials, String name, int position) {
+  Widget _buildTopLeader(String initials, String name, int points, Color color) {
     return Column(
       children: [
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: position == 1 ? Colors.green : Colors.blue,
-            shape: BoxShape.circle,
-          ),
-          child: Center(
-            child: Text(
-              initials,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+        Text(
+          initials,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           name,
           style: const TextStyle(
-            fontSize: 12,
+            fontSize: 14,
             fontWeight: FontWeight.w500,
+            color: Colors.black,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Text(
+            points.toString(),
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
           ),
         ),
       ],
@@ -224,16 +257,9 @@ class SessionScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Colors.grey[50],
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: Border.all(color: Colors.grey[200]!),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -242,7 +268,11 @@ class SessionScreen extends StatelessWidget {
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-              color: color,
+              gradient: LinearGradient(
+                colors: [Color(0xFF4A90E2), Color(0xFF50E3C2)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
               shape: BoxShape.circle,
             ),
             child: Center(
@@ -269,7 +299,7 @@ class SessionScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.circle, color: Colors.orange, size: 8),
+              const Icon(Icons.emoji_events, color: Colors.orange, size: 16),
               const SizedBox(width: 4),
               Text(
                 points.toString(),
