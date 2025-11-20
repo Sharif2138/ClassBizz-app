@@ -96,9 +96,9 @@ class SessionScreen extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _buildTopLeader('AU', 'Alex', 45, Color(0xFF4A90E2)),
-                      _buildTopLeader('GN', 'Grace', 42, Color(0xFF50E3C2)),
-                      _buildTopLeader('JN', 'John', 38, Color(0xFF50E3C2)),
+                      _buildTopLeader('AU', 'Alex', 45, const Color(0xFF4A90E2)),
+                      _buildTopLeader('GN', 'Grace', 42, const Color(0xFF50E3C2)),
+                      _buildTopLeader('JN', 'John', 38, const Color(0xFF50E3C2)),
                     ],
                   ),
                 ),
@@ -121,10 +121,10 @@ class SessionScreen extends StatelessWidget {
                     mainAxisSpacing: 12,
                     childAspectRatio: 1.2,
                     children: [
-                      _buildLeaderboardCard('AU', 'Alex Uwimana', 45, Color(0xFF4A90E2)),
-                      _buildLeaderboardCard('GN', 'Grace Nsabimana', 42, Color(0xFF50E3C2)),
-                      _buildLeaderboardCard('JN', 'John Nzeyimana', 38, Color(0xFF4A90E2)),
-                      _buildLeaderboardCard('MU', 'Marie Uwimeza', 35, Color(0xFF50E3C2)),
+                      _buildLeaderboardCard('AU', 'Alex Uwimana', 45, const Color(0xFF4A90E2)),
+                      _buildLeaderboardCard('GN', 'Grace Nsabimana', 42, const Color(0xFF50E3C2)),
+                      _buildLeaderboardCard('JN', 'John Nzeyimana', 38, const Color(0xFF4A90E2)),
+                      _buildLeaderboardCard('MU', 'Marie Uwimeza', 35, const Color(0xFF50E3C2)),
                     ],
                   ),
                 ),
@@ -257,32 +257,29 @@ class SessionScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF4A90E2), Color(0xFF50E3C2)],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Text(
-                initials,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+          CircleAvatar(
+            backgroundColor: color,
+            radius: 20,
+            child: Text(
+              initials,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
               ),
             ),
           ),
@@ -291,25 +288,17 @@ class SessionScreen extends StatelessWidget {
             name,
             style: const TextStyle(
               fontSize: 14,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
             ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 4),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.emoji_events, color: Colors.orange, size: 16),
-              const SizedBox(width: 4),
-              Text(
-                points.toString(),
-                style: const TextStyle(
-                  color: Colors.orange,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-            ],
+          Text(
+            '$points pts',
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey[600],
+            ),
           ),
         ],
       ),
@@ -321,89 +310,20 @@ class SessionScreen extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          title: const Text(
-            'End Session',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          content: const Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'End session for all students?',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 8),
-              Text(
-                'This will stop the live participation tracking and take students to the review screen.',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
+          title: const Text('End Session'),
+          content: const Text('Are you sure you want to end this class session?'),
           actions: [
-            Column(
-              children: [
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: const Text(
-                      'End Now',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                SizedBox(
-                  width: double.infinity,
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        side: BorderSide(color: Colors.grey[300]!),
-                      ),
-                    ),
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              child: const Text('End Session', style: TextStyle(color: Colors.white)),
             ),
           ],
         );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'create_session_screen.dart';
+import 'lecturer_profile_screen.dart';
 
 class LecturerHomeScreen extends StatelessWidget {
   const LecturerHomeScreen({super.key});
@@ -27,11 +28,21 @@ class LecturerHomeScreen extends StatelessWidget {
                     // Top row with profile and notification
                     Row(
                       children: [
-                        const CircleAvatar(
-                          radius: 25,
-                          backgroundImage: AssetImage('assets/profile_placeholder.png'),
-                          backgroundColor: Colors.white,
-                          child: Icon(Icons.person, color: Colors.grey),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const LecturerProfileScreen(),
+                              ),
+                            );
+                          },
+                          child: const CircleAvatar(
+                            radius: 25,
+                            backgroundImage: AssetImage('assets/profile_placeholder.png'),
+                            backgroundColor: Colors.white,
+                            child: Icon(Icons.person, color: Colors.grey),
+                          ),
                         ),
                         const SizedBox(width: 12),
                         const Expanded(

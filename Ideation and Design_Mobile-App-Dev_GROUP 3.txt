@@ -1,0 +1,587 @@
+﻿WELCOME TO CLASS BIZZ!!
+
+
+
+
+LINK TO FIGMA DESIGN PROTOTYPE: https://www.figma.com/proto/cyyDzIiAxor3QPTCpy35Wx/ClassBizz?node-id=1-151&t=uOBlYg2c4ewlsSS2-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=1%3A46
+
+
+LINK TO RAW FIGMA FILE:
+https://www.figma.com/design/cyyDzIiAxor3QPTCpy35Wx/ClassBizz?node-id=0-1&t=KtyfLVKFLp9HJB1y-1
+
+
+
+
+
+
+Group 3 Members
+1. Adebayo Seyi
+2. Peter Nnamchukwu
+3. Emmanuella Briggs
+4. Sharif Kiviiri
+5. Joshua Mugisha Ochel
+
+
+
+
+
+
+Part A:  Secondary Research
+Background or Introduction
+This project aims to increase student participation in classrooms within the education sector. It was created for the sole purpose of improving the impact of education beyond the classroom. The goal is to make sure that students do not just attend class but understand what is being taught. According to research conducted by Grade Power Learning, "There are several reasons why students may not participate in class discussions or raise their hands when they have questions. Many students fear they will look silly, nervous, or less smart if they get the answer wrong and their classmates will judge them for it[1]." Understanding that not only primary school students experience this, but university students as well, made us realize a change needs to arise. This project is important for the community because it develops essential skills like communication, critical thinking, and teamwork among students. It creates a sense of belonging and empowers them to be engaged and active citizens who positively contribute to society's solutions and challenges. This is where Class Biz comes in, not only to increase student participation but also to improve the amount of retention and understanding they have of topics taught in class.
+
+
+
+
+
+
+
+
+Problem Statement
+With an increased number of students failing or resulting in AI for assignments and research, there has been a decline in participation in class. Based on a 2021 survey, 45.7% of students reported being engaged with school. This number was down from the reported 52.6% in 2019 and 65% in 2018. [2]. 75% of educators in a 2023 poll reported that the top reason students are struggling to stay engaged is a general lack of intrinsic motivation for learning in school. [3].In a 2024 survey, 92% of teachers noted that technology has had a positive impact on their student engagement. [4]. This critical problem in education goes beyond the lack of interest, as some students fear being judged by their peers when participating in discussion, which in turn creates obstacles for meaningful classroom interactions. Apart from that, there is no systematic way for lecturers to track and reward student participation effectively.
+
+
+
+
+Objectives
+The main goal of this project is to build ClassBizz, an app that makes classes more fun and keeps students active in lessons. The idea is to reward students when they speak up, answer questions, or share ideas, and to make the class feel like a game with points and leaderboards. At the same time, teachers also get feedback at the end of each lesson so they can see how well they are doing.
+Specific objectives:
+* Get students more involved by giving points for their answers or contributions in class.
+* Make learning fun and competitive by showing a live leaderboard that updates as points are given.
+* Help teachers improve by letting students rate and review their lessons after class.
+* Keep lesson history so both students and teachers can look back and see progress over time.
+* Boost student confidence by creating a safe way to participate without being scared of judgment.
+Expected results:
+If this app is used in classrooms, students will feel more motivated to take part in lessons instead of just sitting quietly. Teachers will also get useful feedback from students, which can help them improve how they teach. In the end, ClassBizz will make classes more interactive, enjoyable, and meaningful for both students and lecturers.
+
+
+Preliminary literature review
+There are already some apps that try to make classes more fun and keep students engaged, but most of them only solve part of the problem. Here are some examples:
+ClassDojo: This app is popular in primary and secondary schools. Teachers give or take away points for behavior and can even share progress with parents. It’s simple and works well for younger kids, but it has been criticized for being like “behavior surveillance” [5]. Also, it doesn’t really help in universities or focus on rating teachers.
+Kahoot: Kahoot is all about quizzes that feel like games. Many studies show that it makes students more excited and focused during class [6]. But it is limited because it’s only about answering quiz questions. It doesn’t let lecturers reward students for speaking up or asking good questions, which is what ClassBizz wants to do.
+Top Hat: This is more advanced and used in universities. It helps with polls, attendance, and quizzes [7]. But it can feel heavy and complicated, and schools usually have to buy it as a full package. It doesn’t really focus on fun competition or quick point-giving during class.
+Socrative and Mentimeter: Both of these apps are used for live quizzes, polls, and short feedback [8]. They’re good for checking if students understood a topic, but they don’t have features like a live leaderboard or end-of-class teacher ratings.
+Why ClassBizz is still needed:
+What makes ClassBizz special is that it mixes the good parts of these apps but also adds what they are missing. With ClassBizz, lecturers can quickly give points for different kinds of contributions, students can see a fun and competitive leaderboard, and at the end, they can rate the lecturer’s delivery. This makes learning more exciting for students and more useful for teachers. Other apps do bits of this, but none combine all three in a simple and easy-to-use way. That’s why ClassBizz would be unique and helpful.
+
+
+Target Audience
+This application is tailored to serve university students aged 17-28 and their educators, including lecturers, facilitators, and professors, starting with universities in Africa, particularly Rwanda's African Leadership Campus. For students, ClassBizz addresses the critical need for engaging course content in a fun and interactive way, while for lecturers, it provides a systematic method to allocate points to students based on proactivity, engagement, and accuracy. This target audience is highly relevant as the global education technology market is experiencing unprecedented growth, with the market size estimated at USD 163.49 billion in 2024 and projected to reach USD 348.41 billion by 2030, growing at a CAGR of 13.3%. More specifically, the African e-learning market presents a significant opportunity, valued at USD 3,411.38 million in 2024 and expected to grow at an impressive CAGR of 19.20% to reach USD 19,755.71 million by 2034, making it one of the fastest-growing regional markets globally. The increasing demand for personalized learning solutions and integration of modern pedagogical techniques using AI and data analytics are major contributors to this growth. University students, as digital natives aged 17-28, represent the most tech-savvy demographic and are naturally inclined toward gamified learning experiences, while educators increasingly seek innovative tools to combat declining engagement rates. With 75% of educators reporting lack of intrinsic motivation as the primary barrier to student engagement and 92% of teachers noting technology's positive impact on student participation, ClassBizz directly addresses a validated market need in a rapidly expanding sector.
+
+
+
+
+Key Components of ClassBizz
+User Registration and Authentication.
+Role-based Profiles, ie, students and Lecturers
+Session Creation by Lecturer.
+Interactive Student Cards
+Points Awarding System
+Live Leaderboard Updates
+Lesson Review and Rating System
+Student and Teacher Profile Pages
+Lesson History and Participation Records
+Notifications and Reminders
+Secure Data Storage
+
+
+Key Functionalities of ClassBizz App
+1. User Authentication
+Sign Up: Both students and lecturers can register using their institutions' emails, ie, student and staff email.
+Log In: Users access their accounts after logging in.
+2. Role-based Profiles
+Lecturers: Can create new lecture sessions and assign points.
+Students: Can join sessions.
+3. Session Creation
+Lecturers create a lesson session that generates a unique join code.
+Students enter the code to join the session in real time.
+4. Interactive Student Cards
+Each student is displayed on the lecturer’s screen as a responsive card.
+The lecturer taps a card to award points based on the type and accuracy of contributions.
+5. Points Awarding System
+Different contributions, e.g., answering correctly, asking questions, responding to peers, carry different point values.
+Points are updated live for all students in the class session.
+6. Live Leaderboard
+Displays real-time rankings of students based on points earned.
+Encourages friendly competition and motivates participation.
+7. Lesson Review and Rating System
+At the end of each lesson, students review and rate the lecturer’s delivery.
+Ratings and feedback are stored and linked to the lecturer’s profile for accountability.
+8. Profiles and History
+Students: Profiles display their participation history, ranking progress, and achievements.
+Lecturers: Profiles display ratings, reviews, and session history
+9. Notifications & Reminders
+Push notifications remind students of upcoming sessions and participation awards.
+Lecturers receive notifications about session feedback and performance.
+10. Secure Data Storage
+All participation points, reviews, and history are stored securely.
+Ensures both transparency and privacy for students and teachers.
+
+
+Detailed App Flow
+The ClassBizz app opens with a screen showing the app logo and tagline. After loading, users are directed to the Authentication Screen, where they can sign up or log in.
+New Users: Register with school emails and select their role, i.e, Student or Lecturer.
+Lecturers: After logging in, they are directed to the Lecturer Dashboard, where they can create a new session. Each session generates a unique join code that is shared with students.
+Students: After logging in, they are directed to the Student Dashboard, where they can join sessions by entering the session code.
+
+
+Once in a session:
+The lecturer’s screen shows Student Cards, one for each student present.
+When a student contributes, the lecturer taps the card to assign points.
+The awarded points update instantly on the Leaderboard Screen, visible to all students and the lecturer.
+At the end of the lesson:
+Students are prompted to rate and review the lecturer’s delivery.
+Reviews are stored in the lecturer’s profile and are visible for accountability.
+Outside sessions:
+Students can view their profiles, which include a history of contributions, rankings, and achievements.
+Lecturers can view their profiles, which show ratings, feedback, and session history
+Both students and lecturers can access the Leaderboard Screen, showing overall rankings within a course and across sessions.
+
+
+
+
+
+
+
+
+Part B: Primary Research (User Research)
+
+
+For our research, we interviewed 20 participants: 5 facilitators and 15 students who matched our application's target demographic. Each participant shared insights based on their real classroom experiences.
+To avoid bias, we prioritized diversity in our selection. Our participants represent over 6 countries, capturing perspectives from different cultures and communication styles. This approach ensured we heard from both naturally outgoing students and those who are more reserved.
+When choosing who to interview, we made sure to be very conscious of the fact that we wanted to hear multiple perspectives. The best way to do that was by finding people from different backgrounds, considering age, country of origin, number of siblings, and occupation. For the students, we targeted those within the age range of 18-25 who are currently enrolled at ALU and are attending classes, from first years to third years. This application is what students would use to learn and potentially help boost their engagement in class activities and discussions, so we made sure to make our primary users our first advisors.
+The facilitators are, most of the time, the determining factors of how a class might go, so we made sure to interview facilitators who teach online and in-person. This gave us a broader and more exposed view of the different challenges that might be faced by facilitators based on the course they teach and their mode of delivery.
+This interview was meant to help us gather information on why the traditional mode of delivery is not working and what we as software engineers can do to fix it. It helped us understand the pain points of students in boring classes or situations where they feel they can't speak up. It also helped us understand how facilitators struggle to get students to engage, especially when classes are online and you have to force students to turn on their cameras. Additionally, it helped us understand what types of features or incentives students would love to have in the app that would motivate them to participate in class, like meal vouchers, free merch, etc.
+Screener Questions:
+* Are you currently enrolled in a university?
+* Do you attend classes regularly?
+* Do you face challenges with engagement or participation?
+* Are you interested in EdTech?
+* What course do you study?
+* Are you a lecturer at a university?
+To schedule our interviews, we sent emails to 20 participants that we felt would be interested, explaining to them what our project is about. If they were interested, they could pick a time slot and book a session with us for the interviews. Some others were reached out to in person, where we walked up to random students, started talking, and asked them if they would be interested, while establishing the fact that it is fully confidential. We mentioned that the interviews wouldn't take much of their time, ranging from 5 to 15 minutes in person.
+All the facilitators that we interviewed were familiar faces, and the students were a mix of students we walked up to and students we knew prior. We stated that participation was voluntary with no incentives. Each member of the team conducted 4 interviews, giving us a total of 20 interviews.
+All 20 participants met our screening criteria and represented the diversity we were looking for. The 15 students were currently enrolled at African Leadership University, regularly attended classes, and expressed interest in EdTech solutions. They represented different engagement levels; some were highly active participants, while others struggled to speak up in class. They came from over 6 countries, giving us cultural diversity in our sample. The 5 facilitators had direct experience teaching at ALU in both online and in-person formats, which gave them firsthand knowledge of student engagement patterns and the challenges of different delivery modes. This mix of perspectives ensured we captured insights from both sides of the classroom experience.
+ALL RECORDINGS AND OR NOTE-TAKING WHERE CONSENTED TO.
+IF IT WAS NOT MENTIONED IN THE RECORDING, IT WAS MENTIONED BEFORE THE RECORDING STARTED.
+
+
+Mobile Dev Interviews Sept 2025 EVIDENCE FOR INTERVIEWS
+Participant Consent Form for Interview.pdf
+Interview Questions
+P1-Interview Documentation - Participant P1 (1).pdf
+P2- Interview Documentation – Participant P2.pdf
+P3-Interview Documentation – Participant P3.pdf
+P4-Interview Documentation – Participant P4 (1).pdf
+P5-Interview Documentation - Participant P5 (1).pdf
+P6-Interview Documentation – Participant P6.pdf
+P7-Interview Document P7.pdf
+P8-Interview Documentation – Participant P8.pdf
+P9-Interview Documentation – Participant P9.pdf        
+P10- Interview Documentation – Participant P10.pdf
+P11-Interview Documentation - Participant P11.pdf
+P12-Interview Documentation - Participant P12.pdf
+P13-Interview Documentation - Participant P13.pdf
+P14 -Interview Documet P14.pdf
+P15-Interview Document P15.pdf
+P16-Interview Document P16.pdf
+P17-Interview Document P17.pdf
+P18-Interview Document P18.pdf
+P19-Interview Documentation - Participant P19.pdf
+P20-Interview Documentation - Participant P20.pdf
+
+
+
+
+Competitor Signals Heard from Users
+Participants currently use applications like Kahoot, Canvas, Duolingo, and Google Suite to learn. Some of these use gamified methods, while others don't.
+Direct Competitors: None of the aforementioned applications are in direct competition with our solution because they do not actually track attendance and engagement in the way we intend to.
+Indirect Competitors:
+Kahoot – It is gamified, but it does not necessarily track engagement or attendance.
+Canvas – It is an LMS (Learning Management System), not necessarily focused on boosting engagement.
+Duolingo – It is used for gamified learning, but for language learning, not classroom engagement.
+We can say the same for Codex, Jeopardy, and similar platforms. Even though they weren't mentioned by participants, it would be good to include them in our analysis.
+P2 mentioned Duolingo as the most popular gamified learning app. This implies students are already familiar with streak tracking and daily challenges, so incorporating similar features (progress streaks, daily goals) would feel intuitive and motivating for them.
+For a better comparison of our competitors, see Part A, Preliminary Literature Review.
+
+
+
+
+Problem Statement, UVP, and Hypotheses
+Problem Statement: University students at ALU are learners who want to engage actively in class but need a system that recognizes all participation attempts and provides immediate feedback because fear of being wrong publicly, lack of recognition for contributions, and loss of focus during technical content prevent them from engaging consistently.
+Unique Value Proposition (UVP): A mobile engagement app with real-time leaderboards, anonymous participation options, and points for all attempts, helping students confidently engage during class.
+Key Features to Consider:
+Real-time rankings/leaderboards
+Points for participation, not just correctness
+Streak tracking
+Side quests/multiple ways to earn points
+Immediate feedback
+Incentives like meal vouchers, free merch, etc.
+During-class integration
+Hypotheses:
+1. If we award points for all participation attempts (not just correct answers), then class engagement will increase by ≥35%, and students who rated themselves 6/10 or lower in participation will increase their contributions by ≥40% in the span of 3-4 weeks.
+2. If students are given incentives to engage in class, then engagement in class will increase by ≥55%, and when students receive their prizes, sessions will become more engaging by ≥50% within 2 weeks.
+Reducing Bias
+To make sure that our research was not biased, we added some measures and rules we had to follow. To handle confirmation bias, we made sure to ask open-ended questions that allowed the interviewees to air their opinions and share their stories. We made sure to listen to them very actively. To reduce false consensus bias, we interviewed a diverse group of participants, from highly active to reluctant participants, instead of assuming all students and faculty face the same challenges.
+We took notes and also recorded sessions when permitted so we would not corrupt or alter the data, using the same protocol for all participants. To address implicit bias, we made sure to interview people beyond our social circle, including those pursuing different degrees and from different cultural backgrounds. To combat recency and primacy effects, we carried out our interviews on different days to ensure quality. We avoided bandwagoning, used neutral words, and remained conscious of the participants' body language throughout each session. By working in phases with clear decision points, we also avoided the sunk-cost fallacy, staying open to changing direction if the evidence suggested we needed to.
+Email Template
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Journey Map – Current State (Without ClassBizz)
+
+
+
+
+Stage
+	Before Class
+	During Class
+	After Class
+	Actions
+	Logs into class via Zoom, Google Meet or LMS
+	Hesitates to answer questions
+	Waits days for facilitator feedback
+	Thoughts
+	“Will I say something wrong?”
+	“I don’t want to look foolish.”
+	“No one noticed my effort.”
+	Emotions
+	Nervous
+	Disengaged
+	Disappointed
+	Pain Points
+	No anonymity
+	No reward
+	No quick feedback
+	
+
+
+
+WITH CLASSBIZZ
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Empathy Map
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Part C: Figma UI Prototype
+
+
+
+
+Design Goals and Traceability
+The ClassBizz prototype was designed to translate user research findings into a low-friction, interesting, and motivational classroom experience. Part B findings had shown that students are anxious about public engagement participation and that facilitators have difficulty tracking engagement manually and providing delayed feedback. Therefore, the key design goals were to: (1) implement anonymous student engagement in an effort to reduce judgment fear, (2) introduce gamified point and leaderboard systems to promote motivation, (3) automate facilitator scoring to reduce workload, (4) provide structured mid-term feedback loops, and (5) provide consistent performance under low-bandwidth conditions. Every interaction and screen in the prototype has a traceable mapping to these goals, enabling a clear trace from user requirement to user interface decision.
+
+
+
+Traceability Table – From Research to UI
+
+Requirement
+	Screen/Component
+	How UI Addresses It
+	Evidence
+	R1
+	“Join Class” + “Contribution Card”
+	Allows anonymous submissions
+	Hassan (P2)
+	R2
+	“Leaderboard Screen”
+	Displays ranks and points
+	HonourGod (P3), Delice (P5)
+	R3
+	“Facilitator Dashboard”
+	Tap-to-award automation
+	Callixte (P1), Bernard (P4)
+	R4
+	“Review & Feedback”
+	Bi-weekly structured reviews
+	Joy (P6)
+	R5
+	“Offline Save State”
+	Saves participation data locally
+	Hassan (P2)
+	Information Architecture & Flow Diagram
+ClassBizz's Information Architecture was instituted with a hub-and-spoke model of navigation, in that users can always return to the Homepage as the central hub. This reduces disorientation among new users and allows for quick toggling among primary functions such as joining a class, viewing leaderboards, or looking at profiles.
+The flowchart is utilized to illustrate the primary user experience, beginning with onboarding and ending once a class review has been finished. This design serves to support our user research data in that it reduces steps from joining to receiving feedback, and maintains users engaged through visual progress and gamification. Edge cases, i.e., poor internet connectivity, were also addressed through an Offline/Error page, with emphasis put on accessible low-bandwidth usage.
+
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+Clickable primary flow (prototype link )
+LINK TO FIGMA DESIGN PROTOTYPE: https://www.figma.com/proto/cyyDzIiAxor3QPTCpy35Wx/ClassBizz?node-id=1-151&t=uOBlYg2c4ewlsSS2-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=1%3A46
+
+
+
+
+LINK TO RAW FIGMA FILE:
+https://www.figma.com/design/cyyDzIiAxor3QPTCpy35Wx/ClassBizz?node-id=0-1&t=KtyfLVKFLp9HJB1y-1
+
+
+
+
+Accessibility and Device Considerations
+ClassBizz prioritizes accessibility and usability in African classrooms. All touch zones and buttons are at least 44×44 px, the minimum target size. Font sizes are a minimum of 16 px or higher with high-contrast backgrounds to ensure readability on budget Android phones. Offline saving enables continued use in low-bandwidth conditions. The app is English/French bilingual to reflect ALU's blended student population and uses WCAG contrast guidelines for educational technology.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Group Member
+	Member Role
+	Attended (Dates Attended)
+	Contribution
+	Emmauella Briggs
+	Member
+	Sep 15, 2025
+	Evaluated different Global Challenges and Opportunities (GCGOs) to determine which sectors had the most pressing needs for innovation.
+	Peter Nnamchukwu
+	Member
+	Sep 15, 2025
+	introduced the gamification concept, suggesting game mechanics like leaderboards and points to motivate student participation.
+	Joshua Mugisha
+	Member
+	Sep 15, 2025
+	Suggested exploring solutions in the tourism sector, which opened the discussion to consider various industries.
+	Seyi Adebayo
+	Member
+	Sep 15, 2025
+	Contributed ideas around real-time feedback and attendance tracking systems to help monitor engagement throughout class.
+	Sharif Kiviiri
+	Member
+	Sep 15, 2025
+	Suggested shifting focus to the education sector, recognizing challenges students face with engagement and attendance in university settings.
+	
+
+
+
+
+
+15/09/2025 Meeting with members
+  
+
+
+
+
+
+
+
+Office hours with learning coach(Samiratu Ntoshi) 17/09/2025
+
+
+Group Member
+	Member Role
+	Attended (Dates Attended)
+	Contribution
+	Emmauella Briggs
+	Member
+	Sep 17, 2025
+	Contributed to the process
+	Peter Nnamchukwu
+	Member
+	Sep 17, 2025
+	Setup all calls
+	Joshua Mugisha
+	Member
+	Sep 17, 2025
+	Contributed to the process
+	Seyi Adebayo
+	Member
+	Sep 17, 2025
+	Added features
+	Sharif Kiviiri
+	Member
+	Sep 17, 2025
+	Came up with the idea and shared
+	Samiratu Ntoshi
+	Learning Coach
+	Sep 17, 2025
+	Gave feedback on project
+	
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+References
+Chiangpradit, L. (2024, January 12). 5+ Surprising Stats About Student Engagement. STEM Sports. Retrieved September 19, 2025, from https://stemsports.com/5-surprising-stats-about-student-engagement/
+
+
+[1]Why Students Don't Participate In Class. (2024, August 30). GradePower Learning. Retrieved September 19, 2025, from https://gradepowerlearning.com/resources/enrichment/why-students-dont-participate-in-class/
+
+
+[2] Edge, S. (2021, August 10). Student engagement drops - again - during the pandemic. Idaho Education News. Retrieved September 19, 2025, from https://www.idahoednews.org/news/student-engagement-drops-again-during-the-pandemic/
+
+
+Edge, S. (2021, 10 08). Student engagement drops – again – during the pandemic. Idaho Education News. https://www.idahoednews.org/news/student-engagement-drops-again-during-the-pandemic/
+[3] Gradient Learning. (n.d.). https://gradientlearning.org/
+
+
+[4]Education & Learning Statistics. (n.d.). ZipDo. Retrieved September 19, 2025, from https://zipdo.co/topic/education-learning/
+[5]Wang, A. I., & Tahir, R. (2020, 05). The effect of using Kahoot! for learning – A literature review. Computers & Education, 149. https://doi.org/10.1016/j.compedu.2020.103818
+[6]Azdemir, O. (2024, 10 22). Kahoot! Game-based digital learning platform: A comprehensive meta-analysis. Journal of Computer Assisted Learning, 4(1). https://doi.org/10.1111/jcal.13084
+[7]Ebrahimzadeh, M., & Alavi, S. (2017, 04 17). THE EFFECT OF DIGITAL VIDEO GAMES ON EFL STUDENTS’ LANGUAGE LEARNING MOTIVATION. Teaching English with Technology, 17(2), 87-112. https://www.ceeol.com/search/article-detail?id=527571
+
+
+[8]Huseyin, B., & Kocakoyun, S. (2018, 02 27). Perceptions of students for the gamification approach: Kahoot as a case study. International Journal of Emerging Technologies in Learning, 13(2), 72-93. https://doi.org/10.3991/ijet.v13i02.7467
+
+
+
+
+
+
+
+
+
+
+
+
+APPENDIX
