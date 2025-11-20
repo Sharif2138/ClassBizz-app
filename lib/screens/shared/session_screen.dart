@@ -384,4 +384,75 @@ class SessionScreen extends StatelessWidget {
       },
     );
   }
+
+  Widget _quickAccessItem(String title, IconData icon, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 1),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: color, size: 24),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickAccessCards() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: _quickAccessItem('Attendance', Icons.how_to_reg, Colors.blue),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _quickAccessItem('Polls', Icons.poll, Colors.green),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: _quickAccessItem('Whiteboard', Icons.brush, Colors.purple),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _quickAccessItem('Leaderboard', Icons.emoji_events, Colors.orange),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
 }

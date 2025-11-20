@@ -15,6 +15,7 @@ import 'providers/session_provider.dart';
 import 'screens/student/student_bottom_nav.dart';
 import 'screens/student/join_session_screen.dart';
 import 'screens/shared/leaderboard_screen.dart';
+import 'screens/lecturer/lecturer_bottom_nav.dart';
 
 
 
@@ -94,7 +95,7 @@ class AuthWrapper extends StatelessWidget {
             if (isStudent == true) {
               return const StudentBottomNav();
             } else {
-              return const LecturerDashboardScreen();
+              return const LecturerBottomNav();
             }
           },
         );
