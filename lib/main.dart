@@ -17,6 +17,7 @@ import 'screens/student/join_session_screen.dart';
 import 'screens/shared/leaderboard_screen.dart';
 
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -37,6 +38,7 @@ class ClassBizzApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+
       title: 'ClassBizz',
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
@@ -52,6 +54,7 @@ class ClassBizzApp extends StatelessWidget {
         '/student/join': (context) => const JoinSessionScreen(),
         '/shared/leaderboard': (context) => const LeaderboardScreen(),
       },
+
     );
   }
 }
