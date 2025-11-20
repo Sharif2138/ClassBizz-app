@@ -60,7 +60,7 @@ class _JoinSessionScreenState extends State<JoinSessionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // NOTE: no bottomNavigationBar here
+      
       backgroundColor: const Color(0xFFF6F7FB),
       body: SafeArea(
         child: Column(
@@ -229,7 +229,9 @@ class _JoinCard extends StatelessWidget {
             width: double.infinity,
             height: 50,
             child: ElevatedButton(
-              onPressed: isJoining ? null : onJoin,
+              onPressed: () {
+                Navigator.pushNamed(context, '/session');
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF5E86FF),
                 shape: RoundedRectangleBorder(

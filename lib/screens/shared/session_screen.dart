@@ -1,303 +1,193 @@
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  int _currentIndex = 0;
-  final TextEditingController _classCodeController = TextEditingController();
-
-  // Sample data for quick access classes
-  final List<Map<String, dynamic>> _quickAccessClasses = [
-    {
-      'code': 'ADF301',
-      'name': 'Advanced Frontend Dev',
-      'status': 'Active',
-      'color': Colors.purple,
-    },
-    {
-      'code': 'CS401',
-      'name': 'Data Structures',
-      'status': 'Active',
-      'color': Colors.orange,
-    },
-  ];
+class SessionScreen extends StatelessWidget {
+  const SessionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: Text('Class Session Starter'),
+        title: const Text('Class Session'),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
-        elevation: 1,
+        elevation: 0,
       ),
-      body: _buildBody(),
-      bottomNavigationBar: _buildBottomNavigationBar(),
+      backgroundColor: const Color(0xFFF6F7FB),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildStartClassCard(),
+              const SizedBox(height: 32),
+              const Padding(
+                padding: EdgeInsets.only(bottom: 16),
+                child: Text(
+                  'Quick Access',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                ),
+              ),
+              _buildQuickAccessCards(),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
-  Widget _buildBody() {
-    switch (_currentIndex) {
-      case 0:
-        return _buildHomeContent();
-      case 1:
-        return _buildHistoryContent();
-      case 2:
-        return _buildProfileContent();
-      default:
-        return _buildHomeContent();
-    }
-  }
-
-  Widget _buildHomeContent() {
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Start Class Section
-          Card(
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Padding(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Start Class',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    'Enter Class Code',
-                    style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-                  ),
-                  SizedBox(height: 8),
-                  TextField(
-                    controller: _classCodeController,
-                    decoration: InputDecoration(
-                      hintText: 'e.g., MATH301',
-                      border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 12),
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    'Start your class session with the class code',
-                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                  ),
-                  SizedBox(height: 20),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        _startClass(_classCodeController.text);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: Text(
-                        'Start Class',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          SizedBox(height: 24),
-
-          // Quick Access Section
-          Text(
-            'Quick Access',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 16),
-
-          // Quick Access Classes List
-          Column(
-            children: _quickAccessClasses.map((classInfo) {
-              return _buildClassCard(classInfo);
-            }).toList(),
+  Widget _buildStartClassCard() {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildClassCard(Map<String, dynamic> classInfo) {
-    return Card(
-      elevation: 2,
-      margin: EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: ListTile(
-        contentPadding: EdgeInsets.all(16),
-        leading: Container(
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(
-            color: classInfo['color'].withAlpha(51),
-            borderRadius: BorderRadius.circular(8),
+      child: Column(
+        children: [
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              color: Colors.blue.shade50,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.add, color: Colors.blue.shade600, size: 32),
           ),
-          child: Center(
-            child: Text(
-              classInfo['code'].substring(0, 3),
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: classInfo['color'],
+          const SizedBox(height: 16),
+          const Text(
+            'Enter Class Code',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Start your class session with the class code',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.grey, fontSize: 14),
+          ),
+          const SizedBox(height: 24),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const TextField(
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: 'e.g., MATH301',
+                hintStyle: TextStyle(color: Colors.grey),
               ),
             ),
           ),
-        ),
-        title: Text(
-          classInfo['code'],
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(classInfo['name']),
-            SizedBox(height: 4),
-            Row(
+          const SizedBox(height: 16),
+          Container(
+            width: double.infinity,
+            height: 50,
+            decoration: BoxDecoration(
+              color: Colors.blue.shade600,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                  width: 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: Colors.green,
-                    shape: BoxShape.circle,
+                const Icon(Icons.play_arrow, color: Colors.white, size: 20),
+                const SizedBox(width: 8),
+                const Text(
+                  'Start Class',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
                   ),
-                ),
-                SizedBox(width: 6),
-                Text(
-                  classInfo['status'],
-                  style: TextStyle(color: Colors.green, fontSize: 12),
                 ),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickAccessCards() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: _quickAccessItem(
+                'Attendance',
+                Icons.how_to_reg,
+                Colors.blue,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _quickAccessItem('Polls', Icons.poll, Colors.green),
+            ),
           ],
         ),
-        trailing: ElevatedButton(
-          onPressed: () {
-            _startClass(classInfo['code']);
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: classInfo['color'],
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: _quickAccessItem('Whiteboard', Icons.brush, Colors.purple),
             ),
-          ),
-          child: Text('Join'),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _quickAccessItem(
+                'Leaderboard',
+                Icons.emoji_events,
+                Colors.orange,
+              ),
+            ),
+          ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildHistoryContent() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.history, size: 64, color: Colors.grey[400]),
-          SizedBox(height: 16),
-          Text(
-            'Class History',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey[600],
-            ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            'Your previous class sessions will appear here',
-            style: TextStyle(color: Colors.grey[500]),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildProfileContent() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircleAvatar(
-            radius: 50,
-            backgroundColor: Colors.blue[100],
-            child: Icon(Icons.person, size: 50, color: Colors.blue),
-          ),
-          SizedBox(height: 16),
-          Text(
-            'User Profile',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 8),
-          Text(
-            'Manage your account settings',
-            style: TextStyle(color: Colors.grey[600]),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBottomNavigationBar() {
-    return BottomNavigationBar(
-      currentIndex: _currentIndex,
-      onTap: (index) {
-        setState(() {
-          _currentIndex = index;
-        });
-      },
-      items: [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-        BottomNavigationBarItem(icon: Icon(Icons.history), label: 'History'),
-        BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
       ],
-      selectedItemColor: Colors.blue,
-      unselectedItemColor: Colors.grey,
     );
   }
 
-  void _startClass(String classCode) {
-    if (classCode.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Please enter a class code'),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
-
-    // Navigate to class session screen
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Starting class: $classCode'),
-        backgroundColor: Colors.green,
+  Widget _quickAccessItem(String title, IconData icon, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 1),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: color, size: 24),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            title,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
-
-    // In a real app, you would navigate to the class session screen
-    // Navigator.push(context, MaterialPageRoute(builder: (context) => ClassSessionScreen(classCode: classCode)));
   }
 }

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../providers/auth_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -9,6 +12,15 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool isStudent = true;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +74,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
             // Email field
             TextField(
-              decoration: InputDecoration(
+              controller: _emailController,
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(
                 labelText: 'Email Address',
                 prefixIcon: Icon(Icons.email_outlined),
                 border: OutlineInputBorder(),
@@ -72,8 +86,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
             // Password field
             TextField(
+              controller: _passwordController,
               obscureText: true,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Password',
                 prefixIcon: Icon(Icons.lock_outline),
                 border: OutlineInputBorder(),
@@ -85,22 +100,65 @@ class _LoginScreenState extends State<LoginScreen> {
             SizedBox(
               width: double.infinity,
               height: 50,
-              child: ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: const Text(
-                  'Login',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
+              child: Consumer<AuthProvider>(
+                builder: (context, auth, _) {
+                  return ElevatedButton(
+                    onPressed: auth.isLoading
+                        ? null
+                        : () async {
+                            final email = _emailController.text.trim();
+                            final password = _passwordController.text;
+                            final messenger = ScaffoldMessenger.of(context);
+
+                            if (email.isEmpty || password.isEmpty) {
+                              messenger.showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'Please enter email and password',
+                                  ),
+                                ),
+                              );
+                              return;
+                            }
+
+                            final navigator = Navigator.of(context);
+                            await auth.signIn(email, password);
+
+                            if (!mounted) return;
+
+                            if (auth.errorMessage != null) {
+                              messenger.showSnackBar(
+                                SnackBar(content: Text(auth.errorMessage!)),
+                              );
+                            } else {
+                              navigator.pushReplacementNamed('/');
+                            }
+                          },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: auth.isLoading
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : const Text(
+                            'Login',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
+                  );
+                },
               ),
             ),
 
