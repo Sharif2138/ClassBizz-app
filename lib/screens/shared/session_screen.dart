@@ -1,150 +1,221 @@
 import 'package:flutter/material.dart';
 
 class SessionScreen extends StatelessWidget {
-  const SessionScreen({super.key});
+  const SessionScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Class Session')
-      ),
       backgroundColor: Colors.white,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Section 1 - Start Class Card
-              _buildStartClassCard(),
-              
-              const SizedBox(height: 32),
-              
-              // Section 2 - Quick Access Title
-              const Padding(
-                padding: EdgeInsets.only(bottom: 16),
-                child: Text(
-                  'Quick Access',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                  ),
+      body: Column(
+        children: [
+          // Gradient Header with Stats Cards
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF4A90E2), Color(0xFF50E3C2)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        IconButton(
+                          onPressed: () => Navigator.pop(context),
+                          icon: const Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const Spacer(),
+                        const Icon(Icons.bar_chart, color: Colors.white),
+                        const SizedBox(width: 16),
+                        const Icon(Icons.share, color: Colors.white),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'ADF 101 – Participation Mode',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Code: ADF301',
+                      style: TextStyle(color: Colors.white70, fontSize: 14),
+                    ),
+                    const SizedBox(height: 30),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _buildStatCard('5', 'Students', Icons.people),
+                        _buildStatCard('38', 'Avg Points', Icons.emoji_events),
+                        _buildStatCard(
+                          'Live',
+                          'Session',
+                          Icons.circle,
+                          isLive: true,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 30),
+                  ],
                 ),
               ),
-              
-              // Section 3 - Quick Access Cards
-              _buildQuickAccessCards(),
-            ],
+            ),
           ),
-        ),
-      ),
-    );
-  }
 
-  Widget _buildStartClassCard() {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          // Center Icon
+          // Current Leaders Section
           Container(
-            width: 64,
-            height: 64,
-            decoration: BoxDecoration(
-              color: Colors.blue.shade50,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.add,
-              color: Colors.blue.shade600,
-              size: 32,
-            ),
-          ),
-          
-          const SizedBox(height: 16),
-          
-          // Title
-          const Text(
-            'Enter Class Code',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          
-          const SizedBox(height: 8),
-          
-          // Description
-          const Text(
-            'Start your class session with the class code',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.grey,
-              fontSize: 14,
-            ),
-          ),
-          
-          const SizedBox(height: 24),
-          
-          // Input Box
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const TextField(
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: 'e.g., MATH301',
-                hintStyle: TextStyle(color: Colors.grey),
-              ),
-            ),
-          ),
-          
-          const SizedBox(height: 16),
-          
-          // Start Button
-          Container(
-            width: double.infinity,
-            height: 50,
-            decoration: BoxDecoration(
-              color: Colors.blue.shade600,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            color: Colors.white,
+            child: Column(
               children: [
-                Icon(Icons.play_arrow, color: Colors.white, size: 20),
-                SizedBox(width: 8),
-                Text(
-                  'Start Class',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.emoji_events, color: Colors.orange),
+                      const SizedBox(width: 8),
+                      const Text(
+                        'Current Leaders',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Top 3 Leaders
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildTopLeader(
+                        'AU',
+                        'Alex',
+                        45,
+                        const Color(0xFF4A90E2),
+                      ),
+                      _buildTopLeader(
+                        'GN',
+                        'Grace',
+                        42,
+                        const Color(0xFF50E3C2),
+                      ),
+                      _buildTopLeader(
+                        'JN',
+                        'John',
+                        38,
+                        const Color(0xFF50E3C2),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          // Leaderboard Grid with End Class Button Overlay
+          Expanded(
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: GridView.count(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    childAspectRatio: 1.2,
+                    children: [
+                      _buildLeaderboardCard(
+                        'AU',
+                        'Alex Uwimana',
+                        45,
+                        const Color(0xFF4A90E2),
+                      ),
+                      _buildLeaderboardCard(
+                        'GN',
+                        'Grace Nsabimana',
+                        42,
+                        const Color(0xFF50E3C2),
+                      ),
+                      _buildLeaderboardCard(
+                        'JN',
+                        'John Nzeyimana',
+                        38,
+                        const Color(0xFF4A90E2),
+                      ),
+                      _buildLeaderboardCard(
+                        'MU',
+                        'Marie Uwimeza',
+                        35,
+                        const Color(0xFF50E3C2),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // End Class Button Positioned Over Bottom Cards
+                Positioned(
+                  bottom: 40,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: SizedBox(
+                      width: 120,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          _showEndSessionDialog(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                        child: const Text(
+                          'End Class',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
           ),
+
+          const SizedBox(height: 80),
         ],
       ),
     );
   }
-  
-  Widget _buildStatCard(String value, String label, IconData icon, {bool isLive = false}) {
+
+  Widget _buildStatCard(
+    String value,
+    String label,
+    IconData icon, {
+    bool isLive = false,
+  }) {
     return Container(
       width: 100,
       height: 100,
@@ -167,10 +238,7 @@ class SessionScreen extends StatelessWidget {
           ),
           Text(
             label,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 12,
-            ),
+            style: const TextStyle(color: Colors.white, fontSize: 12),
           ),
           if (isLive)
             Container(
@@ -186,8 +254,13 @@ class SessionScreen extends StatelessWidget {
       ),
     );
   }
-  
-  Widget _buildTopLeader(String initials, String name, int points, Color color) {
+
+  Widget _buildTopLeader(
+    String initials,
+    String name,
+    int points,
+    Color color,
+  ) {
     return Column(
       children: [
         Text(
@@ -226,233 +299,86 @@ class SessionScreen extends StatelessWidget {
       ],
     );
   }
-  
-  Widget _buildLeaderboardCard(String initials, String name, int points, Color color) {
+
+  Widget _buildLeaderboardCard(
+    String initials,
+    String name,
+    int points,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF4A90E2), Color(0xFF50E3C2)],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Text(
-                initials,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+          CircleAvatar(
+            backgroundColor: color,
+            radius: 20,
+            child: Text(
+              initials,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
               ),
             ),
           ),
           const SizedBox(height: 8),
           Text(
             name,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 4),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.emoji_events, color: Colors.orange, size: 16),
-              const SizedBox(width: 4),
-              Text(
-                points.toString(),
-                style: const TextStyle(
-                  color: Colors.orange,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-            ],
+          Text(
+            '$points pts',
+            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
           ),
         ],
       ),
     );
   }
-  
+
   void _showEndSessionDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          title: const Text(
-            'End Session',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          content: const Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'End session for all students?',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 8),
-              Text(
-                'This will stop the live participation tracking and take students to the review screen.',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
+          title: const Text('End Session'),
+          content: const Text(
+            'Are you sure you want to end this class session?',
           ),
           actions: [
-            Column(
-              children: [
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: const Text(
-                      'End Now',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                SizedBox(
-                  width: double.infinity,
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        side: BorderSide(color: Colors.grey[300]!),
-                      ),
-                    ),
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              child: const Text(
+                'End Session',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ],
         );
       },
-    );
-  }
-
-  Widget _quickAccessItem(String title, IconData icon, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 4,
-            offset: const Offset(0, 1),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.12),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(icon, color: color, size: 24),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildQuickAccessCards() {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: _quickAccessItem('Attendance', Icons.how_to_reg, Colors.blue),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _quickAccessItem('Polls', Icons.poll, Colors.green),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: _quickAccessItem('Whiteboard', Icons.brush, Colors.purple),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _quickAccessItem('Leaderboard', Icons.emoji_events, Colors.orange),
-            ),
-          ],
-        ),
-      ],
     );
   }
 }
