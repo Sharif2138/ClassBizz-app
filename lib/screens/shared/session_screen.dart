@@ -46,7 +46,7 @@ class SessionScreen extends StatelessWidget {
                   }
                   final count = snapshot.data?.length ?? 0;
                   return Text(
-                    '$count Students Participating',
+                    '$count Students in the session',
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -56,9 +56,6 @@ class SessionScreen extends StatelessWidget {
               ),
               const SizedBox(height: 10),
 
-              // Live attendees list: we use a stream from the provider.
-              // The provider could expose Stream<List<AttendeeModel>> or Stream<QuerySnapshot>.
-              // Here I assume it exposes Stream<List<AttendeeModel>> via attendeesStream(sessionId).
               Expanded(
                 child: StreamBuilder<List<AttendeeModel>>(
                   stream: sessionProvider.attendeeStream(sessionId),
@@ -70,7 +67,7 @@ class SessionScreen extends StatelessWidget {
                     final attendees = attendeesSnapshot.data ?? [];
 
                     if (attendees.isEmpty) {
-                      return const Center(child: Text('No students yet'));
+                      return const Center(child: Text('No students have joined yet'));
                     }
 
                     return GridView.builder(
@@ -80,7 +77,7 @@ class SessionScreen extends StatelessWidget {
                             crossAxisCount: 3,
                             crossAxisSpacing: 10,
                             mainAxisSpacing: 10,
-                            childAspectRatio: 0.9,
+                            childAspectRatio: 0.8,
                           ),
                       itemCount: attendees.length,
                       itemBuilder: (context, index) {
