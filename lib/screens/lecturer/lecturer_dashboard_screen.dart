@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'create_session_screen.dart';
 import '../../providers/auth_provider.dart';
 import 'package:provider/provider.dart';
+import 'create_class_dialog.dart';
 
 
 class LecturerDashboardScreen extends StatelessWidget {
@@ -10,7 +10,6 @@ class LecturerDashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = context.watch<AuthProvider>().currentUser;
-    final AuthProvider authProvider = context.read<AuthProvider>();
     return Scaffold(
       backgroundColor: Colors.grey[100],
       body: Column(
@@ -110,12 +109,16 @@ class LecturerDashboardScreen extends StatelessWidget {
                             Expanded(
                               child: ElevatedButton.icon(
                                 onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const CreateSessionScreen(),
-                                    ),
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => CreateClassDialog(),
                                   );
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(
+                                  //     builder: (context) => const CreateSessionScreen(),
+                                  //   ),
+                                  // );
                                 },
                                 icon: const Icon(Icons.add, color: Colors.white),
                                 label: const Text(
@@ -202,35 +205,7 @@ bottomNavigationBar: Container(
     );
   }
 
-  Widget _buildStatItem(String number, String label, IconData icon) {
-    return Column(
-      children: [
-        Icon(
-          icon,
-          color: Colors.white,
-          size: 30,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          number,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Text(
-          label,
-          style: const TextStyle(
-            color: Colors.white70,
-            fontSize: 12,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ],
-    );
-  }
-
+ 
   Widget _buildActivityItem(
     String title,
     String students,

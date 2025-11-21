@@ -52,6 +52,17 @@ class SessionProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> getSession(String sessionId) async {
+    isLoading = true;
+    notifyListeners();
+    try {
+      session = await _sessionService.getSession(sessionId);
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
   /// Student leaves a session
   Future<void> leaveSession({
     required String sessionId,

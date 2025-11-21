@@ -1,322 +1,274 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:classbizz_app/providers/session_provider.dart';
+import 'package:classbizz_app/models/session_model.dart';
+import 'package:classbizz_app/models/attendee_model.dart';
 
 class SessionScreen extends StatelessWidget {
-  const SessionScreen({Key? key}) : super(key: key);
+  final String sessionId;
+  const SessionScreen({super.key, required this.sessionId});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          // Gradient Header with Stats Cards
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF4A90E2), Color(0xFF50E3C2)],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-            ),
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        IconButton(
-                          onPressed: () => Navigator.pop(context),
-                          icon: const Icon(
-                            Icons.arrow_back,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const Spacer(),
-                        const Icon(Icons.bar_chart, color: Colors.white),
-                        const SizedBox(width: 16),
-                        const Icon(Icons.share, color: Colors.white),
-                      ],
+    final sessionProvider = context.watch<SessionProvider>();
+    // final currentUser = context.watch<AuthProvider>().currentUser;
+
+    // Listen to the session document (real-time)
+    return StreamBuilder<SessionModel?>(
+      stream: sessionProvider.sessionStream(sessionId),
+      builder: (context, sessionSnapshot) {
+        if (sessionSnapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+        if (!sessionSnapshot.hasData) {
+          return const Scaffold(body: Center(child: Text('Session not found')));
+        }
+
+        final session = sessionSnapshot.data!;
+
+        return Scaffold(
+          backgroundColor: Colors.white,
+          body: Column(
+            children: [
+              _buildHeader(session, context),
+              const SizedBox(height: 10),
+              StreamBuilder<List<AttendeeModel>>(
+                stream: sessionProvider.attendeeStream(sessionId),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const SizedBox(
+                      height: 24,
+                      child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                    );
+                  }
+                  final count = snapshot.data?.length ?? 0;
+                  return Text(
+                    '$count Students Participating',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                     ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'ADF 101 – Participation Mode',
-                      style: TextStyle(
+                  );
+                },
+              ),
+              const SizedBox(height: 10),
+
+              // Live attendees list: we use a stream from the provider.
+              // The provider could expose Stream<List<AttendeeModel>> or Stream<QuerySnapshot>.
+              // Here I assume it exposes Stream<List<AttendeeModel>> via attendeesStream(sessionId).
+              Expanded(
+                child: StreamBuilder<List<AttendeeModel>>(
+                  stream: sessionProvider.attendeeStream(sessionId),
+                  builder: (context, attendeesSnapshot) {
+                    if (attendeesSnapshot.connectionState ==
+                        ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    final attendees = attendeesSnapshot.data ?? [];
+
+                    if (attendees.isEmpty) {
+                      return const Center(child: Text('No students yet'));
+                    }
+
+                    return GridView.builder(
+                      padding: const EdgeInsets.all(12),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                            childAspectRatio: 0.9,
+                          ),
+                      itemCount: attendees.length,
+                      itemBuilder: (context, index) {
+                        final a = attendees[index];
+                        final initials = _buildInitials(a.name);
+                        return StudentCard(
+                          sessionId: session.sessionId,
+                          attendee: a,
+                          initials: initials,
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // Header: receives a SessionModel so it's pure and testable
+  Widget _buildHeader(SessionModel session, BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF4A90E2), Color(0xFF50E3C2)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+      ),
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Row(
+                children: const [
+                  Spacer(),
+                  Icon(Icons.bar_chart, color: Colors.white),
+                ],
+              ),
+              const SizedBox(height: 5),
+              Row(
+                children: [
+                  Flexible(
+                    child: Text(
+                      session.name,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Code: ADF301',
-                      style: TextStyle(color: Colors.white70, fontSize: 14),
-                    ),
-                    const SizedBox(height: 30),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        _buildStatCard('5', 'Students', Icons.people),
-                        _buildStatCard('38', 'Avg Points', Icons.emoji_events),
-                        _buildStatCard(
-                          'Live',
-                          'Session',
-                          Icons.circle,
-                          isLive: true,
+                  ),
+                  const SizedBox(width: 12),
+                  if (session.topic != null)
+                    Flexible(
+                      child: Text(
+                        session.topic!,
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 14,
                         ),
-                      ],
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                    const SizedBox(height: 30),
-                  ],
-                ),
+                ],
               ),
-            ),
-          ),
-
-          // Current Leaders Section
-          Container(
-            color: Colors.white,
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.emoji_events, color: Colors.orange),
-                      const SizedBox(width: 8),
-                      const Text(
-                        'Current Leaders',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Text(
+                    'Code: ${session.sessionId}',
+                    style: const TextStyle(color: Colors.white70),
                   ),
-                ),
-
-                // Top 3 Leaders
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildTopLeader(
-                        'AU',
-                        'Alex',
-                        45,
-                        const Color(0xFF4A90E2),
-                      ),
-                      _buildTopLeader(
-                        'GN',
-                        'Grace',
-                        42,
-                        const Color(0xFF50E3C2),
-                      ),
-                      _buildTopLeader(
-                        'JN',
-                        'John',
-                        38,
-                        const Color(0xFF50E3C2),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 20),
-
-          // Leaderboard Grid with End Class Button Overlay
-          Expanded(
-            child: Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: GridView.count(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    childAspectRatio: 1.2,
-                    children: [
-                      _buildLeaderboardCard(
-                        'AU',
-                        'Alex Uwimana',
-                        45,
-                        const Color(0xFF4A90E2),
-                      ),
-                      _buildLeaderboardCard(
-                        'GN',
-                        'Grace Nsabimana',
-                        42,
-                        const Color(0xFF50E3C2),
-                      ),
-                      _buildLeaderboardCard(
-                        'JN',
-                        'John Nzeyimana',
-                        38,
-                        const Color(0xFF4A90E2),
-                      ),
-                      _buildLeaderboardCard(
-                        'MU',
-                        'Marie Uwimeza',
-                        35,
-                        const Color(0xFF50E3C2),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // End Class Button Positioned Over Bottom Cards
-                Positioned(
-                  bottom: 40,
-                  left: 0,
-                  right: 0,
-                  child: Center(
-                    child: SizedBox(
-                      width: 120,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          _showEndSessionDialog(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                        child: const Text(
-                          'End Class',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
+                  const SizedBox(width: 8),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.copy,
+                      color: Colors.white70,
+                      size: 18,
                     ),
+                    onPressed: () {
+                      // Copy code to clipboard
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Copied session code')),
+                      );
+                      Clipboard.setData(ClipboardData(text: session.sessionId));
+                    },
                   ),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 80),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatCard(
-    String value,
-    String label,
-    IconData icon, {
-    bool isLive = false,
-  }) {
-    return Container(
-      width: 100,
-      height: 100,
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: Colors.white, size: 24),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
-            label,
-            style: const TextStyle(color: Colors.white, fontSize: 12),
-          ),
-          if (isLive)
-            Container(
-              margin: const EdgeInsets.only(top: 4),
-              width: 8,
-              height: 8,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
+                ],
               ),
-            ),
-        ],
+              const SizedBox(height: 6),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildTopLeader(
-    String initials,
-    String name,
-    int points,
-    Color color,
-  ) {
-    return Column(
-      children: [
-        Text(
-          initials,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          name,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Colors.black,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: Text(
-            points.toString(),
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 14,
-            ),
-          ),
-        ),
-      ],
+  static String _buildInitials(String name) {
+    final parts = name.trim().split(RegExp(r'\s+'));
+    if (parts.length == 1) {
+      return parts[0].substring(0, parts[0].length >= 2 ? 2 : 1).toUpperCase();
+    }
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+}
+
+// ---------------- Student Card (separate widget) ----------------
+class StudentCard extends StatefulWidget {
+  final String sessionId;
+  final AttendeeModel attendee;
+  final String initials;
+
+  const StudentCard({
+    super.key,
+    required this.sessionId,
+    required this.attendee,
+    required this.initials,
+  });
+
+  @override
+  State<StudentCard> createState() => _StudentCardState();
+}
+
+class _StudentCardState extends State<StudentCard>
+    with SingleTickerProviderStateMixin {
+  late int currentPoints;
+  late AnimationController _controller;
+  late Animation<double> _scale;
+
+  @override
+  void initState() {
+    super.initState();
+    currentPoints = widget.attendee.points;
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
     );
+    _scale =
+        Tween<double>(begin: 1.0, end: 1.35).animate(
+          CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+        )..addStatusListener((s) {
+          if (s == AnimationStatus.completed) _controller.reverse();
+        });
   }
 
-  Widget _buildLeaderboardCard(
-    String initials,
-    String name,
-    int points,
-    Color color,
-  ) {
+  Future<void> _award(int pts) async {
+    // optimistic local update + animation
+    setState(() => currentPoints += pts);
+    _controller.forward();
+
+    // call provider to update Firestore (this will cause the stream to emit updated data)
+    try {
+      final provider = context.read<SessionProvider>();
+      await provider.awardPoints(
+        sessionId: widget.sessionId,
+        uid: widget.attendee.uid,
+        points: pts,
+      );
+      // provider's stream will push the updated value to everyone; local optimistic update already done
+    } catch (e) {
+      // on error, roll back local change and show error
+      setState(() => currentPoints -= pts);
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to award points: $e')));
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.shade200,
             spreadRadius: 1,
-            blurRadius: 5,
-            offset: const Offset(0, 2),
+            blurRadius: 6,
           ),
         ],
       ),
@@ -324,61 +276,70 @@ class SessionScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircleAvatar(
-            backgroundColor: color,
-            radius: 20,
+            backgroundColor: const Color(0xFF4A90E2),
+            radius: 18,
             child: Text(
-              initials,
+              widget.initials,
               style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
-                fontSize: 16,
               ),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           Text(
-            name,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+            widget.attendee.name,
+            style: const TextStyle(fontSize: 13),
             textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
-          const SizedBox(height: 4),
-          Text(
-            '$points pts',
-            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+          const SizedBox(height: 6),
+          ScaleTransition(
+            scale: _scale,
+            child: Text(
+              '$currentPoints pts',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildPointButton('+5', Colors.green, 5),
+              _buildPointButton('+3', Colors.blue, 3),
+              _buildPointButton('+1', Colors.orange, 1),
+            ],
           ),
         ],
       ),
     );
   }
 
-  void _showEndSessionDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('End Session'),
-          content: const Text(
-            'Are you sure you want to end this class session?',
+  Widget _buildPointButton(String label, Color color, int pts) {
+    return GestureDetector(
+      onTap: () => _award(pts),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.12),
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: color,
+            fontSize: 12,
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.pop(context);
-              },
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-              child: const Text(
-                'End Session',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ],
-        );
-      },
+        ),
+      ),
     );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }
