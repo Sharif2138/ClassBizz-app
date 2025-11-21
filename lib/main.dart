@@ -1,5 +1,5 @@
 import 'package:classbizz_app/screens/aunthentication/home_screen.dart';
-import 'package:classbizz_app/screens/shared/session_screen.dart';
+
 import 'package:classbizz_app/screens/student/student_dashboard_screen.dart';
 import 'package:classbizz_app/screens/lecturer/lecturer_dashboard_screen.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +11,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'providers/auth_provider.dart';
 import 'screens/aunthentication/email_verifictaion_screen.dart';
+import 'providers/session_provider.dart';
+import 'screens/student/student_bottom_nav.dart';
+import 'screens/shared/leaderboard_screen.dart';
+import 'screens/lecturer/lecturer_bottom_nav.dart';
+
+
+
+
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +28,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider<AuthProvider>(create: (_) => AuthProvider()),
+        ChangeNotifierProvider<SessionProvider>(create: (_) => SessionProvider()),
       ],
       child: const ClassBizzApp(),
     ),
@@ -31,18 +41,22 @@ class ClassBizzApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+
       title: 'ClassBizz',
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
         '/': (context) => const AuthWrapper(),
-        '/home': (context) => const HomeScreen(),
+        // '/home': (context) => const HomeScreen(),
         '/student/dashboard': (context) => const StudentDashboardScreen(),
         '/lecturer/dashboard': (context) => const LecturerDashboardScreen(),
         '/login': (context) => const LoginScreen(),
         '/signup': (context) => const SignUpScreen(),
         '/email-verification': (context) => const EmailVerificationScreen(),
+        '/shared/leaderboard': (context) => const LeaderboardScreen(),
+
       },
+
     );
   }
 }
@@ -80,9 +94,9 @@ class AuthWrapper extends StatelessWidget {
             final user = documentSnapshot.data!.data() as Map<String, dynamic>;
             final bool isStudent = user['isStudent'];
             if (isStudent == true) {
-              return const StudentDashboardScreen();
+              return const StudentBottomNav();
             } else {
-              return const LecturerDashboardScreen();
+              return const LecturerBottomNav();
             }
           },
         );

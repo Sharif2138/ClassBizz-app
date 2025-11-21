@@ -1,303 +1,345 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:classbizz_app/providers/session_provider.dart';
+import 'package:classbizz_app/models/session_model.dart';
+import 'package:classbizz_app/models/attendee_model.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  int _currentIndex = 0;
-  final TextEditingController _classCodeController = TextEditingController();
-
-  // Sample data for quick access classes
-  final List<Map<String, dynamic>> _quickAccessClasses = [
-    {
-      'code': 'ADF301',
-      'name': 'Advanced Frontend Dev',
-      'status': 'Active',
-      'color': Colors.purple,
-    },
-    {
-      'code': 'CS401',
-      'name': 'Data Structures',
-      'status': 'Active',
-      'color': Colors.orange,
-    },
-  ];
+class SessionScreen extends StatelessWidget {
+  final String sessionId;
+  const SessionScreen({super.key, required this.sessionId});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        title: Text('Class Session Starter'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        elevation: 1,
-      ),
-      body: _buildBody(),
-      bottomNavigationBar: _buildBottomNavigationBar(),
+    final sessionProvider = context.watch<SessionProvider>();
+    // final currentUser = context.watch<AuthProvider>().currentUser;
+
+    // Listen to the session document (real-time)
+    return StreamBuilder<SessionModel?>(
+      stream: sessionProvider.sessionStream(sessionId),
+      builder: (context, sessionSnapshot) {
+        if (sessionSnapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+        if (!sessionSnapshot.hasData) {
+          return const Scaffold(body: Center(child: Text('Session not found')));
+        }
+
+        final session = sessionSnapshot.data!;
+
+        return Scaffold(
+          backgroundColor: Colors.white,
+          body: Column(
+            children: [
+              _buildHeader(session, context),
+              const SizedBox(height: 10),
+              StreamBuilder<List<AttendeeModel>>(
+                stream: sessionProvider.attendeeStream(sessionId),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const SizedBox(
+                      height: 24,
+                      child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                    );
+                  }
+                  final count = snapshot.data?.length ?? 0;
+                  return Text(
+                    '$count Students Participating',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 10),
+
+              // Live attendees list: we use a stream from the provider.
+              // The provider could expose Stream<List<AttendeeModel>> or Stream<QuerySnapshot>.
+              // Here I assume it exposes Stream<List<AttendeeModel>> via attendeesStream(sessionId).
+              Expanded(
+                child: StreamBuilder<List<AttendeeModel>>(
+                  stream: sessionProvider.attendeeStream(sessionId),
+                  builder: (context, attendeesSnapshot) {
+                    if (attendeesSnapshot.connectionState ==
+                        ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    final attendees = attendeesSnapshot.data ?? [];
+
+                    if (attendees.isEmpty) {
+                      return const Center(child: Text('No students yet'));
+                    }
+
+                    return GridView.builder(
+                      padding: const EdgeInsets.all(12),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                            childAspectRatio: 0.9,
+                          ),
+                      itemCount: attendees.length,
+                      itemBuilder: (context, index) {
+                        final a = attendees[index];
+                        final initials = _buildInitials(a.name);
+                        return StudentCard(
+                          sessionId: session.sessionId,
+                          attendee: a,
+                          initials: initials,
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildBody() {
-    switch (_currentIndex) {
-      case 0:
-        return _buildHomeContent();
-      case 1:
-        return _buildHistoryContent();
-      case 2:
-        return _buildProfileContent();
-      default:
-        return _buildHomeContent();
-    }
-  }
-
-  Widget _buildHomeContent() {
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Start Class Section
-          Card(
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Padding(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+  // Header: receives a SessionModel so it's pure and testable
+  Widget _buildHeader(SessionModel session, BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF4A90E2), Color(0xFF50E3C2)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+      ),
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Row(
+                children: const [
+                  Spacer(),
+                  Icon(Icons.bar_chart, color: Colors.white),
+                ],
+              ),
+              const SizedBox(height: 5),
+              Row(
+                children: [
+                  Flexible(
+                    child: Text(
+                      session.name,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  if (session.topic != null)
+                    Flexible(
+                      child: Text(
+                        session.topic!,
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 14,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
                 children: [
                   Text(
-                    'Start Class',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    'Code: ${session.sessionId}',
+                    style: const TextStyle(color: Colors.white70),
                   ),
-                  SizedBox(height: 16),
-                  Text(
-                    'Enter Class Code',
-                    style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-                  ),
-                  SizedBox(height: 8),
-                  TextField(
-                    controller: _classCodeController,
-                    decoration: InputDecoration(
-                      hintText: 'e.g., MATH301',
-                      border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                  const SizedBox(width: 8),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.copy,
+                      color: Colors.white70,
+                      size: 18,
                     ),
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    'Start your class session with the class code',
-                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                  ),
-                  SizedBox(height: 20),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        _startClass(_classCodeController.text);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: Text(
-                        'Start Class',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
+                    onPressed: () {
+                      // Copy code to clipboard
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Copied session code')),
+                      );
+                      Clipboard.setData(ClipboardData(text: session.sessionId));
+                    },
                   ),
                 ],
               ),
-            ),
+              const SizedBox(height: 6),
+            ],
           ),
+        ),
+      ),
+    );
+  }
 
-          SizedBox(height: 24),
+  static String _buildInitials(String name) {
+    final parts = name.trim().split(RegExp(r'\s+'));
+    if (parts.length == 1) {
+      return parts[0].substring(0, parts[0].length >= 2 ? 2 : 1).toUpperCase();
+    }
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+}
 
-          // Quick Access Section
-          Text(
-            'Quick Access',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 16),
+// ---------------- Student Card (separate widget) ----------------
+class StudentCard extends StatefulWidget {
+  final String sessionId;
+  final AttendeeModel attendee;
+  final String initials;
 
-          // Quick Access Classes List
-          Column(
-            children: _quickAccessClasses.map((classInfo) {
-              return _buildClassCard(classInfo);
-            }).toList(),
+  const StudentCard({
+    super.key,
+    required this.sessionId,
+    required this.attendee,
+    required this.initials,
+  });
+
+  @override
+  State<StudentCard> createState() => _StudentCardState();
+}
+
+class _StudentCardState extends State<StudentCard>
+    with SingleTickerProviderStateMixin {
+  late int currentPoints;
+  late AnimationController _controller;
+  late Animation<double> _scale;
+
+  @override
+  void initState() {
+    super.initState();
+    currentPoints = widget.attendee.points;
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _scale =
+        Tween<double>(begin: 1.0, end: 1.35).animate(
+          CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+        )..addStatusListener((s) {
+          if (s == AnimationStatus.completed) _controller.reverse();
+        });
+  }
+
+  Future<void> _award(int pts) async {
+    // optimistic local update + animation
+    setState(() => currentPoints += pts);
+    _controller.forward();
+
+    // call provider to update Firestore (this will cause the stream to emit updated data)
+    try {
+      final provider = context.read<SessionProvider>();
+      await provider.awardPoints(
+        sessionId: widget.sessionId,
+        uid: widget.attendee.uid,
+        points: pts,
+      );
+      // provider's stream will push the updated value to everyone; local optimistic update already done
+    } catch (e) {
+      // on error, roll back local change and show error
+      setState(() => currentPoints -= pts);
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to award points: $e')));
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.shade200,
+            spreadRadius: 1,
+            blurRadius: 6,
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildClassCard(Map<String, dynamic> classInfo) {
-    return Card(
-      elevation: 2,
-      margin: EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: ListTile(
-        contentPadding: EdgeInsets.all(16),
-        leading: Container(
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(
-            color: classInfo['color'].withAlpha(51),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Center(
-            child: Text(
-              classInfo['code'].substring(0, 3),
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: classInfo['color'],
-              ),
-            ),
-          ),
-        ),
-        title: Text(
-          classInfo['code'],
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(classInfo['name']),
-            SizedBox(height: 4),
-            Row(
-              children: [
-                Container(
-                  width: 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: Colors.green,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                SizedBox(width: 6),
-                Text(
-                  classInfo['status'],
-                  style: TextStyle(color: Colors.green, fontSize: 12),
-                ),
-              ],
-            ),
-          ],
-        ),
-        trailing: ElevatedButton(
-          onPressed: () {
-            _startClass(classInfo['code']);
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: classInfo['color'],
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-          child: Text('Join'),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHistoryContent() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.history, size: 64, color: Colors.grey[400]),
-          SizedBox(height: 16),
-          Text(
-            'Class History',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey[600],
-            ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            'Your previous class sessions will appear here',
-            style: TextStyle(color: Colors.grey[500]),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildProfileContent() {
-    return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircleAvatar(
-            radius: 50,
-            backgroundColor: Colors.blue[100],
-            child: Icon(Icons.person, size: 50, color: Colors.blue),
+            backgroundColor: const Color(0xFF4A90E2),
+            radius: 18,
+            child: Text(
+              widget.initials,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 6),
           Text(
-            'User Profile',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            widget.attendee.name,
+            style: const TextStyle(fontSize: 13),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
-          SizedBox(height: 8),
-          Text(
-            'Manage your account settings',
-            style: TextStyle(color: Colors.grey[600]),
+          const SizedBox(height: 6),
+          ScaleTransition(
+            scale: _scale,
+            child: Text(
+              '$currentPoints pts',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildPointButton('+5', Colors.green, 5),
+              _buildPointButton('+3', Colors.blue, 3),
+              _buildPointButton('+1', Colors.orange, 1),
+            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _buildBottomNavigationBar() {
-    return BottomNavigationBar(
-      currentIndex: _currentIndex,
-      onTap: (index) {
-        setState(() {
-          _currentIndex = index;
-        });
-      },
-      items: [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-        BottomNavigationBarItem(icon: Icon(Icons.history), label: 'History'),
-        BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-      ],
-      selectedItemColor: Colors.blue,
-      unselectedItemColor: Colors.grey,
+  Widget _buildPointButton(String label, Color color, int pts) {
+    return GestureDetector(
+      onTap: () => _award(pts),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.12),
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: color,
+            fontSize: 12,
+          ),
+        ),
+      ),
     );
   }
 
-  void _startClass(String classCode) {
-    if (classCode.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Please enter a class code'),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
-
-    // Navigate to class session screen
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Starting class: $classCode'),
-        backgroundColor: Colors.green,
-      ),
-    );
-
-    // In a real app, you would navigate to the class session screen
-    // Navigator.push(context, MaterialPageRoute(builder: (context) => ClassSessionScreen(classCode: classCode)));
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }

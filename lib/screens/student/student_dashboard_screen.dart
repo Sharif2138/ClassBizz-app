@@ -1,12 +1,15 @@
+import 'package:classbizz_app/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../screens/student/join_session_dailog.dart';
 
 class StudentDashboardScreen extends StatelessWidget {
   const StudentDashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
-      // NOTE: no bottomNavigationBar here anymore
       backgroundColor: const Color(0xFFF6F7FB),
       body: SafeArea(
         child: CustomScrollView(
@@ -16,13 +19,10 @@ class StudentDashboardScreen extends StatelessWidget {
             SliverToBoxAdapter(
               child: _QuickActionsCard(
                 onStartClass: () {
-                  // navigate to join/start session screen (route will be added in main.dart)
-                  // Example:
-                  // Navigator.pushNamed(context, '/student/join');
-                },
-                onLeaderboard: () {
-                  // navigate to leaderboard screen (future)
-                  // Navigator.pushNamed(context, '/student/leaderboard');
+                  showDialog(
+                    context: context,
+                    builder: (context) => const JoinClassDialog(),
+                  );
                 },
               ),
             ),
@@ -68,29 +68,23 @@ class StudentDashboardScreen extends StatelessWidget {
   }
 }
 
-/// ---------------------------------------------------------------------------
-/// HEADER
-/// ---------------------------------------------------------------------------
 class _DashboardHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final user = context.watch<AuthProvider>().currentUser;
     return Stack(
       clipBehavior: Clip.none,
       children: [
         // gradient background
         Container(
-          height: 210,
+          height: 130,
           width: double.infinity,
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [Color(0xFF0F68FF), Color(0xFF01B67A)],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-            ),
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(26),
-              bottomRight: Radius.circular(26),
             ),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -114,7 +108,7 @@ class _DashboardHeader extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Hello, Alex!',
+                            'Hello, ${user?.displayName ?? 'Student'}',
                             style: theme.textTheme.titleMedium?.copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.w600,
@@ -156,26 +150,7 @@ class _DashboardHeader extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  _StatCard(
-                    icon: Icons.calendar_month_rounded,
-                    title: 'Active Classes',
-                    value: '3',
-                  ),
-                  _StatCard(
-                    icon: Icons.people_alt_outlined,
-                    title: 'Total Students',
-                    value: '85',
-                  ),
-                  _StatCard(
-                    icon: Icons.schedule_rounded,
-                    title: 'This Week',
-                    value: '7',
-                  ),
-                ],
-              ),
+              
             ],
           ),
         ),
@@ -185,60 +160,12 @@ class _DashboardHeader extends StatelessWidget {
   }
 }
 
-class _StatCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String value;
 
-  const _StatCard({
-    required this.icon,
-    required this.title,
-    required this.value,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 100,
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.white.withAlpha(38),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Column(
-        children: [
-          Icon(icon, color: Colors.white, size: 20),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 3),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: const TextStyle(color: Colors.white, fontSize: 11),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// ---------------------------------------------------------------------------
-/// QUICK ACTIONS
-/// ---------------------------------------------------------------------------
 class _QuickActionsCard extends StatelessWidget {
   final VoidCallback onStartClass;
-  final VoidCallback onLeaderboard;
 
   const _QuickActionsCard({
     required this.onStartClass,
-    required this.onLeaderboard,
   });
 
   @override
@@ -296,39 +223,7 @@ class _QuickActionsCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              Expanded(
-                child: GestureDetector(
-                  onTap: onLeaderboard,
-                  child: Container(
-                    height: 54,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: const Color(0xFFE5E8EC)),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: const Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.emoji_events_outlined,
-                            color: Color(0xFF0F68FF),
-                            size: 18,
-                          ),
-                          SizedBox(width: 6),
-                          Text(
-                            'Leaderboard',
-                            style: TextStyle(
-                              color: Color(0xFF0F68FF),
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              
             ],
           ),
         ],

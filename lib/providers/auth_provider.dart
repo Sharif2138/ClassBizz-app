@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 class AuthProvider extends ChangeNotifier {
   final AuthService _service = AuthService();
 
+    User? get currentUser => _service.currentUser;
+
   User? user;
   bool isLoading = false;
   String? errorMessage;
