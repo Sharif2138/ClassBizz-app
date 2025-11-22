@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/session_model.dart';
 import '../models/attendee_model.dart';
 import '../services/session_service.dart';
+import '../models/users_model.dart';
 
 class SessionProvider extends ChangeNotifier {
   final SessionService _sessionService = SessionService();
@@ -112,5 +113,9 @@ class SessionProvider extends ChangeNotifier {
       points: points,
     );
     notifyListeners();
+  }
+
+  Stream<UserModel?> userStream(String uid) {
+    return _sessionService.userStream(uid);
   }
 }

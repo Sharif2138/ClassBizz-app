@@ -12,11 +12,15 @@ class FirestoreService {
     return user;
   }
 
-  Future<UserModel?> getUser(String uid) async {
-    final doc = await _db.collection('users').doc(uid).get();
-    if (doc.exists) return UserModel.fromFirestore(doc);
-    return null;
+  Stream<UserModel?> getUserStream(String uid) {
+    return _db.collection('users').doc(uid).snapshots().map((doc) {
+      if (doc.exists) {
+        return UserModel.fromFirestore(doc);
+      }
+      return null;
+    });
   }
+
 
   // -------- SESSION METHODS --------
   Future<SessionModel> saveSession(SessionModel session) async {
@@ -98,7 +102,8 @@ class FirestoreService {
         .collection('sessions')
         .doc(sessionId)
         .collection('attendees')
-        .orderBy('joinedAt', descending: true)
+        // .orderBy('joinedAt', descending: true)
+        .where('status', isEqualTo: 'inLesson')
         .snapshots()
         .map(
           (snapshot) => snapshot.docs

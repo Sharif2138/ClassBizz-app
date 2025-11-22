@@ -1,11 +1,12 @@
 import 'package:classbizz_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../models/users_model.dart';
 
 class AuthProvider extends ChangeNotifier {
   final AuthService _service = AuthService();
 
-    User? get currentUser => _service.currentUser;
+  User? get currentUser => _service.currentUser;
 
   User? user;
   bool isLoading = false;
@@ -18,19 +19,29 @@ class AuthProvider extends ChangeNotifier {
     });
   }
 
-  Future<void> signUp(String name, String email, String password, bool isStudent) async {
-  isLoading = true;
-  errorMessage = null;
-  notifyListeners();
+  Future<void> signUp(
+    String name,
+    String email,
+    String password,
+    bool isStudent,
+  ) async {
+    isLoading = true;
+    errorMessage = null;
+    notifyListeners();
 
-  try {
-     await _service.createUserWithEmailAndPassword(name, email, password, isStudent: isStudent);
-} catch (e) {
+    try {
+      await _service.createUserWithEmailAndPassword(
+        name,
+        email,
+        password,
+        isStudent: isStudent,
+      );
+    } catch (e) {
       errorMessage = e.toString();
-} finally {
+    } finally {
       isLoading = false;
       notifyListeners();
-}
+    }
   }
 
   Future<void> signOut() async {
@@ -39,17 +50,17 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> signIn(String email, String password) async {
-  isLoading = true;
-  notifyListeners();
+    isLoading = true;
+    notifyListeners();
 
-  try {
-  await _service.signInWithEmailAndPassword(email, password);
-} catch (e) {
+    try {
+      await _service.signInWithEmailAndPassword(email, password);
+    } catch (e) {
       errorMessage = e.toString();
-} finally {
+    } finally {
       isLoading = false;
       notifyListeners();
-}
+    }
   }
 
   void clearError() {
@@ -66,7 +77,23 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-
-    
+  Future<UserModel?> fetchUserData(String uid) async {
+  try {
+    if (user == null) {
+      throw Exception('No authenticated user found.');
+    } else {
+      final userdata = await _service.getUserdata(uid);
+      if (userdata != null ) {
+        return userdata;
+      } else {
+        return null;
+      }
+    }
+  } catch (e, st) {
+    debugPrint('Failed to fetch user data: $e\n$st');
+    rethrow;
   }
+}
+  }
+  
 

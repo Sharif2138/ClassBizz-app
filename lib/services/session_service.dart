@@ -2,6 +2,7 @@ import 'dart:math';
 import '../models/session_model.dart';
 import '../models/attendee_model.dart';
 import 'firestore_service.dart';
+import '../models/users_model.dart';
 
 class SessionService {
   final FirestoreService _firestoreService = FirestoreService();
@@ -92,5 +93,9 @@ class SessionService {
     required int points,
   }) async {
     await _firestoreService.awardPoints(sessionId, uid, points);
+  }
+
+  Stream<UserModel?> userStream(String uid) {
+    return _firestoreService.getUserStream(uid);
   }
 }
