@@ -66,6 +66,8 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> signInWithGoogle() async {}
+
 
     
   }
