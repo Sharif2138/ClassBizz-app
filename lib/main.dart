@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import 'package:classbizz_app/screens/student/student_dashboard_screen.dart';
+import 'package:classbizz_app/screens/lecturer/lecturer_dashboard_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
@@ -10,11 +13,8 @@ import 'screens/authentication/home_screen.dart';
 import 'screens/authentication/signup_screen.dart';
 import 'screens/authentication/login_screen.dart';
 import 'screens/authentication/email_verifictaion_screen.dart';
-import 'screens/shared/session_screen.dart';
-import 'screens/student/student_dashboard_screen.dart';
-import 'screens/lecturer/lecturer_dashboard_screen.dart';
+
 import 'screens/student/student_bottom_nav.dart';
-import 'screens/student/join_session_screen.dart';
 import 'screens/shared/leaderboard_screen.dart';
 import 'screens/lecturer/lecturer_bottom_nav.dart';
 
@@ -57,8 +57,6 @@ class ClassBizzApp extends StatelessWidget {
         '/login': (context) => const LoginScreen(),
         '/signup': (context) => const SignUpScreen(),
         '/email-verification': (context) => const EmailVerificationScreen(),
-        '/session': (context) => const SessionScreen(),
-        '/student/join': (context) => const JoinSessionScreen(),
         '/shared/leaderboard': (context) => const LeaderboardScreen(),
       },
     );

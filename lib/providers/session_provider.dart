@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/session_model.dart';
 import '../models/attendee_model.dart';
 import '../services/session_service.dart';
+import '../models/users_model.dart';
 
 class SessionProvider extends ChangeNotifier {
   final SessionService _sessionService = SessionService();
@@ -46,6 +47,17 @@ class SessionProvider extends ChangeNotifier {
         uid: uid,
         name: name,
       );
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getSession(String sessionId) async {
+    isLoading = true;
+    notifyListeners();
+    try {
+      session = await _sessionService.getSession(sessionId);
     } finally {
       isLoading = false;
       notifyListeners();
@@ -101,5 +113,9 @@ class SessionProvider extends ChangeNotifier {
       points: points,
     );
     notifyListeners();
+  }
+
+  Stream<UserModel?> userStream(String uid) {
+    return _sessionService.userStream(uid);
   }
 }

@@ -1,4 +1,7 @@
+import 'package:classbizz_app/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../screens/student/join_session_dailog.dart';
 
 class StudentDashboardScreen extends StatelessWidget {
   const StudentDashboardScreen({super.key});
@@ -15,7 +18,10 @@ class StudentDashboardScreen extends StatelessWidget {
             SliverToBoxAdapter(
               child: _QuickActionsCard(
                 onStartClass: () {
-                  Navigator.pushNamed(context, '/student/join');
+                  showDialog(
+                    context: context,
+                    builder: (context) => const JoinClassDialog(),
+                  );
                 },
                 onLeaderboard: () {
                   Navigator.pushNamed(context, '/shared/leaderboard');
@@ -61,29 +67,23 @@ class StudentDashboardScreen extends StatelessWidget {
   }
 }
 
-/// ---------------------------------------------------------------------------
-/// HEADER
-/// ---------------------------------------------------------------------------
 class _DashboardHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final user = context.watch<AuthProvider>().currentUser;
     return Stack(
       clipBehavior: Clip.none,
       children: [
         // gradient background
         Container(
-          height: 210,
+          height: 130,
           width: double.infinity,
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [Color(0xFF0F68FF), Color(0xFF01B67A)],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-            ),
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(26),
-              bottomRight: Radius.circular(26),
             ),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -106,7 +106,7 @@ class _DashboardHeader extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Hello, Alex!',
+                            'Hello, ${user?.displayName ?? 'Student'}',
                             style: theme.textTheme.titleMedium?.copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.w600,
@@ -148,26 +148,6 @@ class _DashboardHeader extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  _StatCard(
-                    icon: Icons.calendar_month_rounded,
-                    title: 'Active Classes',
-                    value: '3',
-                  ),
-                  _StatCard(
-                    icon: Icons.people_alt_outlined,
-                    title: 'Total Students',
-                    value: '85',
-                  ),
-                  _StatCard(
-                    icon: Icons.schedule_rounded,
-                    title: 'This Week',
-                    value: '7',
-                  ),
-                ],
-              ),
             ],
           ),
         ),
@@ -177,53 +157,6 @@ class _DashboardHeader extends StatelessWidget {
   }
 }
 
-class _StatCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String value;
-
-  const _StatCard({
-    required this.icon,
-    required this.title,
-    required this.value,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 100,
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.15),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Column(
-        children: [
-          Icon(icon, color: Colors.white, size: 20),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 3),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: const TextStyle(color: Colors.white, fontSize: 11),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// ---------------------------------------------------------------------------
-/// QUICK ACTIONS
-/// ---------------------------------------------------------------------------
 class _QuickActionsCard extends StatelessWidget {
   final VoidCallback onStartClass;
   final VoidCallback onLeaderboard;
@@ -275,7 +208,7 @@ class _QuickActionsCard extends StatelessWidget {
                           Icon(Icons.add, color: Colors.white, size: 18),
                           SizedBox(width: 6),
                           Text(
-                            'Start Class',
+                            'Join Class',
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w600,

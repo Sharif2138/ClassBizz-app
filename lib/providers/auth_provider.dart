@@ -1,9 +1,12 @@
 import 'package:classbizz_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../models/users_model.dart';
 
 class AuthProvider extends ChangeNotifier {
   final AuthService _service = AuthService();
+
+  User? get currentUser => _service.currentUser;
 
   User? user;
   bool isLoading = false;
@@ -84,6 +87,24 @@ class AuthProvider extends ChangeNotifier {
       await user.reload();
       this.user = _service.currentUser;
       notifyListeners();
+    }
+  }
+
+  Future<UserModel?> fetchUserData(String uid) async {
+    try {
+      if (user == null) {
+        throw Exception('No authenticated user found.');
+      } else {
+        final userdata = await _service.getUserdata(uid);
+        if (userdata != null) {
+          return userdata;
+        } else {
+          return null;
+        }
+      }
+    } catch (e, st) {
+      debugPrint('Failed to fetch user data: $e\n$st');
+      rethrow;
     }
   }
 }

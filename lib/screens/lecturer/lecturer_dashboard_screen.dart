@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
-import 'create_session_screen.dart';
+import '../../providers/auth_provider.dart';
+import 'package:provider/provider.dart';
+import 'create_class_dialog.dart';
+
 
 class LecturerDashboardScreen extends StatelessWidget {
   const LecturerDashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final user = context.watch<AuthProvider>().currentUser;
     return Scaffold(
       backgroundColor: Colors.grey[100],
       body: Column(
@@ -27,56 +31,41 @@ class LecturerDashboardScreen extends StatelessWidget {
                     // Top row with profile and notification
                     Row(
                       children: [
-                        const CircleAvatar(
+                        CircleAvatar(
                           radius: 25,
-                          backgroundImage: AssetImage('assets/profile_placeholder.png'),
+                          backgroundImage: (user?.photoURL != null)
+                              ? NetworkImage(user!.photoURL!)
+                              : null,
                           backgroundColor: Colors.white,
-                          child: Icon(Icons.person, color: Colors.grey),
+                          child: const Icon(Icons.person, color: Colors.grey),
                         ),
                         const SizedBox(width: 12),
-                        const Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Hello, Alex!',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Text(
+                              "Hi! ${user?.displayName ?? 'No Name'}",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
                               ),
-                              Text(
-                                'Lecturer',
-                                style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 14,
-                                ),
+                            ),
+                            const Text(
+                              'Lecturer',
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 14,
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.notifications_outlined,
-                            color: Colors.white,
-                            size: 28,
-                          ),
-                        ),
+                        
                       ],
                     ),
-                    const SizedBox(height: 30),
-                    // Stats row
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _buildStatItem('3', 'Active Classes', Icons.class_),
-                        _buildStatItem('85', 'Total Students', Icons.people),
-                        _buildStatItem('7', 'This Week', Icons.access_time),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
                   ],
                 ),
               ),
@@ -118,47 +107,33 @@ class LecturerDashboardScreen extends StatelessWidget {
                         Row(
                           children: [
                             Expanded(
-                              child: ElevatedButton.icon(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const CreateSessionScreen(),
+                              child: SizedBox(
+                                height: 54,
+                                child: ElevatedButton.icon(
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => CreateClassDialog(),
+                                    );
+                                    
+                                  },
+                                  icon: const Icon(Icons.add, color: Colors.white),
+                                  label: const Text(
+                                    'Start Class',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color.fromARGB(255, 49, 109, 179),
+                                    padding: const EdgeInsets.symmetric(vertical: 12),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
                                     ),
-                                  );
-                                },
-                                icon: const Icon(Icons.add, color: Colors.white),
-                                label: const Text(
-                                  'Start Class',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF4A90E2),
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
                                   ),
                                 ),
                               ),
                             ),
                             const SizedBox(width: 15),
-                            Expanded(
-                              child: OutlinedButton.icon(
-                                onPressed: () {},
-                                icon: const Icon(Icons.emoji_events, color: Colors.grey),
-                                label: const Text(
-                                  'Leaderboard',
-                                  style: TextStyle(color: Colors.grey),
-                                ),
-                                style: OutlinedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  side: BorderSide(color: Colors.grey.shade300),
-                                ),
-                              ),
-                            ),
+                            
                           ],
                         ),
                       ],
@@ -228,35 +203,7 @@ bottomNavigationBar: Container(
     );
   }
 
-  Widget _buildStatItem(String number, String label, IconData icon) {
-    return Column(
-      children: [
-        Icon(
-          icon,
-          color: Colors.white,
-          size: 30,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          number,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Text(
-          label,
-          style: const TextStyle(
-            color: Colors.white70,
-            fontSize: 12,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ],
-    );
-  }
-
+ 
   Widget _buildActivityItem(
     String title,
     String students,
