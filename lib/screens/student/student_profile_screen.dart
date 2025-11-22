@@ -228,13 +228,13 @@ class _ProfileHeader extends StatelessWidget {
                     ),
                     const SizedBox(height: 15),
                     const Icon(
-                      Icons.star,
+                      Icons.emoji_events,
                       color: Color.fromARGB(255, 208, 214, 9),
                       size: 20,
                     ),
                     const SizedBox(height: 5),
                     const Text(
-                      "4.8",
+                      "3rd",
                       style: TextStyle(
                         color: Color.fromARGB(255, 3, 8, 13),
                         fontWeight: FontWeight.bold,

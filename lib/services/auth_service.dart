@@ -133,10 +133,14 @@ class AuthService {
   Future<void> signOut() async {
     await _auth.signOut();
   }
-}
 
-Future<DocumentSnapshot<Map<String, dynamic>>> getUserdata(String uid) async {
-  DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
-      await FirebaseFirestore.instance.collection('users').doc(uid).get();
-  return documentSnapshot;
+  Future<UserModel?> getUserdata(String uid) async {
+    DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    if (documentSnapshot.exists) {
+      return UserModel.fromFirestore(documentSnapshot);
+    }
+    return null;
+  }
+
 }

@@ -206,7 +206,7 @@ class _QuickActionsCard extends StatelessWidget {
                           Icon(Icons.add, color: Colors.white, size: 18),
                           SizedBox(width: 6),
                           Text(
-                            'Start Class',
+                            'Join Class',
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w600,
