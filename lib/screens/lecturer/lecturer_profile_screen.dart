@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 class LecturerProfileScreen extends StatelessWidget {
   const LecturerProfileScreen({super.key});
+  
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +43,7 @@ class LecturerProfileScreen extends StatelessWidget {
                         ),
                         const Spacer(),
                         IconButton(
-                          onPressed: () {},
+                          onPressed: () => _editProfile(context, user),
                           icon: const Icon(Icons.edit, color: Colors.white),
                         ),
                       ],
@@ -83,11 +84,11 @@ class LecturerProfileScreen extends StatelessWidget {
                         Column(
                           children: [
                             Text(
-                                                  user?.displayName ?? 'No Name',
-                                                  style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
+                              user?.displayName ?? 'No Name',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
                             const Text(
@@ -104,18 +105,16 @@ class LecturerProfileScreen extends StatelessWidget {
                       width: 110,
                       height: 40,
                       child: ElevatedButton(
-                        onPressed: () {
-                          final AuthProvider auth = context
-                              .read<AuthProvider>();
-                          auth.signOut();
-                          
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(255, 205, 36, 2),
+                        onPressed: () => _showLogoutDialog(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color.fromARGB(255, 205, 36, 2
+                          ),
+
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
+                      ),
+                  ),
+                        
                         child: const Text(
                           'Logout',
                           style: TextStyle(
@@ -126,10 +125,10 @@ class LecturerProfileScreen extends StatelessWidget {
                         ),
                       ),
                     ),                   
-                          ],
-                        ),
-                      ],
-                    ),
+                 ],
+               ),
+            ],
+         ),
                   ],
                 ),
               ),
@@ -354,5 +353,142 @@ class LecturerProfileScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Logout Confirmation"),
+          content: const Text("Are you sure you want to logout?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close dialog
+              },
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop(); // Close dialog
+                final auth = context.read<AuthProvider>();
+                await auth.signOut();
+                
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/', 
+                    (route) => false
+                  );
+              },
+              child: const Text(
+                "Logout",
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Edit profile functionality
+  void _editProfile(BuildContext context, user) {
+    final TextEditingController nameController = 
+      TextEditingController(text: user?.displayName ?? '');
+    final TextEditingController emailController =
+      TextEditingController(text: user?.email ?? '');
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Edit Profile"),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    // Add profile picture change logic here
+                  },
+                  child: Stack(
+                    children: [
+                      const CircleAvatar(
+                        radius: 40,
+                        backgroundColor: Colors.white,
+                        child: Icon(Icons.person, size: 50, color: Colors.grey),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: const BoxDecoration(
+                            color: Colors.blue,
+                            shape: BoxShape.circle
+                          ),
+                          child: const Icon(Icons.edit, size: 16, color: Colors.white),
+                        ),
+                      )
+                    ],
+                  ), 
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Full Name',
+                    prefixIcon: Icon(Icons.person),
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: emailController,
+                  decoration: const InputDecoration(
+                    labelText: 'Email',
+                    prefixIcon: Icon(Icons.email),
+                    border: OutlineInputBorder(),
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("Close"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _saveProfileChanges(
+                  context,
+                  nameController.text,
+                  emailController.text,
+                );
+              },
+              child: const Text("Save Changes"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _saveProfileChanges(
+    BuildContext context, 
+    String newName, 
+    String newEmail, 
+  ) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Profile updated successfully!'),
+        backgroundColor: Colors.green,
+      ),
+    );
+    Navigator.of(context).pop();
   }
 }

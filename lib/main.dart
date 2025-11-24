@@ -52,7 +52,7 @@ class ClassBizzApp extends StatelessWidget {
         '/lecturer/dashboard': (context) => const LecturerDashboardScreen(),
         '/login': (context) => const LoginScreen(),
         '/signup': (context) => const SignUpScreen(),
-        '/email-verification': (context) => const EmailVerificationScreen(),
+        '/email-verification': (context) => EmailVerificationScreen(),
         '/shared/leaderboard': (context) => const LeaderboardScreen(),
 
       },
@@ -75,7 +75,7 @@ class AuthWrapper extends StatelessWidget {
       return const WelcomeScreen();
     } else {
       if (!auth.user!.emailVerified) {
-        return const EmailVerificationScreen();
+        return EmailVerificationScreen();
       } else {
         return FutureBuilder<DocumentSnapshot>(
           future: FirebaseFirestore.instance

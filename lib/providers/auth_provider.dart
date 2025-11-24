@@ -45,9 +45,21 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> signOut() async {
+    isLoading = true;
+    notifyListeners();
+
+  try {
     await _service.signOut();
+    user = null;
+    errorMessage = null;
+  } catch (e) {
+    errorMessage = e.toString();
+  } finally {
+    isLoading = false;
     notifyListeners();
   }
+}
+
 
   Future<void> signIn(String email, String password) async {
     isLoading = true;
@@ -77,7 +89,14 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-
-    
+  void reloadUser() {
+    notifyListeners();
   }
+
+  Future<void> sendEmailVerification() async {
+    if (user != null) {
+      await user!.sendEmailVerification();
+    }
+  }
+}
 
