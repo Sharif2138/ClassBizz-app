@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import '../models/users_model.dart';
 import 'firestore_service.dart';
 
@@ -148,6 +149,58 @@ class AuthService {
     }
   }
 
+  Future<User?> signInWithGoogle({required bool isStudent}) async {
+    try {
+      print('AuthService.signInWithGoogle: starting');
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      if (googleUser == null) {
+        print('AuthService.signInWithGoogle: user canceled');
+        return null; // User canceled
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      UserCredential result = await _auth.signInWithCredential(credential);
+      User? user = result.user;
+
+      if (user != null) {
+        // Check if user exists in Firestore
+        final userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+
+        if (!userDoc.exists) {
+          print('AuthService.signInWithGoogle: creating new user in Firestore');
+          // Create user in Firestore
+          UserModel userModel = UserModel(
+            uid: user.uid,
+            name: user.displayName ?? 'No Name',
+            email: user.email ?? '',
+            isStudent: isStudent,
+            profilepic: user.photoURL ?? '',
+          );
+          await FirestoreService().saveUser(userModel);
+        } else {
+          print(
+            'AuthService.signInWithGoogle: user already exists in Firestore',
+          );
+        }
+      }
+
+      return user;
+    } catch (e) {
+      print('AuthService.signInWithGoogle error: $e');
+      throw 'Google Sign In failed: $e';
+    }
+  }
+
   Future<void> signOut() async {
     await _auth.signOut();
   }
@@ -160,5 +213,4 @@ class AuthService {
     }
     return null;
   }
-
 }

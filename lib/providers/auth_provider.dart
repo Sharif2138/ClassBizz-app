@@ -76,6 +76,23 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> signInWithGoogle(bool isStudent) async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      print('AuthProvider.signInWithGoogle: starting');
+      await _service.signInWithGoogle(isStudent: isStudent);
+      print('AuthProvider.signInWithGoogle: completed');
+    } catch (e) {
+      print('AuthProvider.signInWithGoogle: caught error: $e');
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
   void clearError() {
     errorMessage = null;
     notifyListeners();
