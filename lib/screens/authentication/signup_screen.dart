@@ -20,7 +20,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
 
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -124,34 +123,35 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed:  auth.isLoading
+                  onPressed: auth.isLoading
                       ? null
                       : () async {
                           if (!formKey.currentState!.validate()) return;
 
+                          // Capture UI handlers and provider before the async gap
+                          final messenger = ScaffoldMessenger.of(context);
+                          final navigator = Navigator.of(context);
                           final authProvider = context.read<AuthProvider>();
 
-                          // Call signUp and wait for completion
                           await authProvider.signUp(
                             _nameController.text.trim(),
                             _emailController.text.trim(),
                             _passwordController.text.trim(),
                             isStudent,
                           );
+                          // After awaiting, ensure widget is still mounted before using UI
+                          if (!mounted) return;
 
-                          // Check if there was an error
-                          if (authProvider.errorMessage != null) {
-                            if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(authProvider.errorMessage!)),
-                              );
-                              authProvider.clearError();
-                            }
+                          final currentAuth = authProvider;
+                          if (currentAuth.errorMessage != null) {
+                            messenger.showSnackBar(
+                              SnackBar(
+                                content: Text(currentAuth.errorMessage!),
+                              ),
+                            );
+                            currentAuth.clearError();
                           } else {
-                            // Successful signup
-                            if (mounted) {
-                              Navigator.pop(context);
-                            }
+                            navigator.pop();
                           }
                         },
                   style: ElevatedButton.styleFrom(

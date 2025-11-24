@@ -28,8 +28,6 @@ class StudentProfileScreen extends StatelessWidget {
 
               const SizedBox(height: 20),
 
-              
-
               const SizedBox(height: 20),
 
               // ----- SESSION HISTORY -----
@@ -167,9 +165,20 @@ class _SessionHistoryTile extends StatelessWidget {
               style: TextStyle(fontWeight: FontWeight.bold, color: statusColor),
             ),
             const SizedBox(height: 4),
-            Text(
-              status,
-              style: TextStyle(color: statusColor),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+              decoration: BoxDecoration(
+                color: Colors.green.withAlpha(31),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                status,
+                style: TextStyle(
+                  color: Colors.green,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ],
         ),
@@ -441,6 +450,31 @@ class _ProfileHeader extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Clean, minimal student bottom nav bar (conflict-resolved)
+class _StudentBottomNavBar extends StatelessWidget {
+  final int currentIndex;
+  const _StudentBottomNavBar({required this.currentIndex});
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomNavigationBar(
+      currentIndex: currentIndex,
+      onTap: (index) {
+        // keep behavior minimal: navigate to root for Home, noop for others
+        if (index == 0) Navigator.popUntil(context, (route) => route.isFirst);
+      },
+      items: const [
+        BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
+        BottomNavigationBarItem(icon: Icon(Icons.history), label: 'History'),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person_outline),
+          label: 'Profile',
+        ),
+      ],
     );
   }
 }

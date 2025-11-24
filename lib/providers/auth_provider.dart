@@ -30,13 +30,21 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
+      // debug
+      print(
+        'AuthProvider.signUp: starting for email=$email isStudent=$isStudent',
+      );
       await _service.createUserWithEmailAndPassword(
         name,
         email,
         password,
         isStudent: isStudent,
       );
+      print(
+        'AuthProvider.signUp: createUserWithEmailAndPassword completed for email=$email',
+      );
     } catch (e) {
+      print('AuthProvider.signUp: caught error: $e');
       errorMessage = e.toString();
     } finally {
       isLoading = false;
@@ -66,8 +74,30 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
+      print('AuthProvider.signIn: starting for email=$email');
       await _service.signInWithEmailAndPassword(email, password);
+      print(
+        'AuthProvider.signIn: signInWithEmailAndPassword completed for email=$email',
+      );
     } catch (e) {
+      print('AuthProvider.signIn: caught error: $e');
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> signInWithGoogle(bool isStudent) async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      print('AuthProvider.signInWithGoogle: starting');
+      await _service.signInWithGoogle(isStudent: isStudent);
+      print('AuthProvider.signInWithGoogle: completed');
+    } catch (e) {
+      print('AuthProvider.signInWithGoogle: caught error: $e');
       errorMessage = e.toString();
     } finally {
       isLoading = false;

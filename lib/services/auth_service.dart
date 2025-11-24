@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import '../models/users_model.dart';
 import 'firestore_service.dart';
-
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -18,6 +18,7 @@ class AuthService {
     bool? isStudent,
   }) async {
     try {
+      print('AuthService.createUserWithEmailAndPassword: creating $email');
       // Step 1: Create user in Firebase Auth
       UserCredential result = await _auth.createUserWithEmailAndPassword(
         email: email,
@@ -40,7 +41,7 @@ class AuthService {
 
       // Step 4: Send verification email
       await user.sendEmailVerification();
-      
+
       // Step 5: Validate role selection (service layer should not use BuildContext)
       if (isStudent == null) {
         throw FirebaseAuthException(
@@ -59,9 +60,16 @@ class AuthService {
       );
       await FirestoreService().saveUser(userModel);
 
+      print(
+        'AuthService.createUserWithEmailAndPassword: user saved to Firestore uid=${user.uid}',
+      );
+
       // Step 7: Return the user
       return user;
     } on FirebaseAuthException catch (e) {
+      print(
+        'AuthService.createUserWithEmailAndPassword: FirebaseAuthException ${e.code} ${e.message}',
+      );
       switch (e.code) {
         case 'email-already-in-use':
           throw 'That email is already registered.';
@@ -73,6 +81,7 @@ class AuthService {
           throw 'Authentication failed: ${e.message}';
       }
     } catch (e) {
+      print('AuthService.createUserWithEmailAndPassword: unexpected error: $e');
       throw 'Unexpected error: $e';
     }
   }
@@ -82,6 +91,7 @@ class AuthService {
     String password,
   ) async {
     try {
+      print('AuthService.signInWithEmailAndPassword: signing in $email');
       UserCredential result = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
@@ -95,14 +105,20 @@ class AuthService {
           message: 'No user found for that email.',
         );
       }
-       await user.reload();
+      await user.reload();
       user = _auth.currentUser; // refresh reference
 
       if (user != null) {
         if (user.emailVerified) {
+          print(
+            'AuthService.signInWithEmailAndPassword: email verified for ${user.uid}',
+          );
           return user;
         } else {
           await user.sendEmailVerification();
+          print(
+            'AuthService.signInWithEmailAndPassword: email not verified, sent verification to $email',
+          );
           throw FirebaseAuthException(
             code: 'email-not-verified',
             message: 'Email not verified. Verification email sent.',
@@ -115,6 +131,9 @@ class AuthService {
         );
       }
     } on FirebaseAuthException catch (e) {
+      print(
+        'AuthService.signInWithEmailAndPassword: FirebaseAuthException ${e.code} ${e.message}',
+      );
       switch (e.code) {
         case 'wrong-password':
           throw 'Incorrect password.';
@@ -130,6 +149,58 @@ class AuthService {
     }
   }
 
+  Future<User?> signInWithGoogle({required bool isStudent}) async {
+    try {
+      print('AuthService.signInWithGoogle: starting');
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      if (googleUser == null) {
+        print('AuthService.signInWithGoogle: user canceled');
+        return null; // User canceled
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      UserCredential result = await _auth.signInWithCredential(credential);
+      User? user = result.user;
+
+      if (user != null) {
+        // Check if user exists in Firestore
+        final userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+
+        if (!userDoc.exists) {
+          print('AuthService.signInWithGoogle: creating new user in Firestore');
+          // Create user in Firestore
+          UserModel userModel = UserModel(
+            uid: user.uid,
+            name: user.displayName ?? 'No Name',
+            email: user.email ?? '',
+            isStudent: isStudent,
+            profilepic: user.photoURL ?? '',
+          );
+          await FirestoreService().saveUser(userModel);
+        } else {
+          print(
+            'AuthService.signInWithGoogle: user already exists in Firestore',
+          );
+        }
+      }
+
+      return user;
+    } catch (e) {
+      print('AuthService.signInWithGoogle error: $e');
+      throw 'Google Sign In failed: $e';
+    }
+  }
+
   Future<void> signOut() async {
     await _auth.signOut();
   }
@@ -142,5 +213,4 @@ class AuthService {
     }
     return null;
   }
-
 }

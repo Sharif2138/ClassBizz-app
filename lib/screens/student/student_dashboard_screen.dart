@@ -8,7 +8,6 @@ class StudentDashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: const Color(0xFFF6F7FB),
       body: SafeArea(
@@ -23,6 +22,9 @@ class StudentDashboardScreen extends StatelessWidget {
                     context: context,
                     builder: (context) => const JoinClassDialog(),
                   );
+                },
+                onLeaderboard: () {
+                  Navigator.pushNamed(context, '/shared/leaderboard');
                 },
               ),
             ),
@@ -146,7 +148,6 @@ class _DashboardHeader extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 20),
-              
             ],
           ),
         ),
@@ -156,12 +157,13 @@ class _DashboardHeader extends StatelessWidget {
   }
 }
 
-
 class _QuickActionsCard extends StatelessWidget {
   final VoidCallback onStartClass;
+  final VoidCallback onLeaderboard;
 
   const _QuickActionsCard({
     required this.onStartClass,
+    required this.onLeaderboard,
   });
 
   @override
@@ -219,7 +221,38 @@ class _QuickActionsCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              
+              Expanded(
+                child: GestureDetector(
+                  onTap: onLeaderboard,
+                  child: Container(
+                    height: 54,
+                    decoration: BoxDecoration(
+                      color: Colors.orange.shade500,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.emoji_events,
+                            color: Colors.white,
+                            size: 18,
+                          ),
+                          SizedBox(width: 6),
+                          Text(
+                            'Leaderboard',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ],
