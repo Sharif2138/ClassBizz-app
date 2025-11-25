@@ -1,110 +1,228 @@
+import 'package:classbizz_app/models/users_model.dart';
+import 'package:classbizz_app/models/session_model.dart';
+import 'package:classbizz_app/models/attendee_model.dart';
+import 'package:classbizz_app/providers/auth_provider.dart';
+import 'package:classbizz_app/providers/session_provider.dart';
+import 'package:classbizz_app/screens/lecturer/lecturer_bottom_nav.dart';
+import 'package:classbizz_app/screens/student/after_session_screen.dart';
+import 'package:classbizz_app/screens/student/student_bottom_nav.dart';
+import 'package:classbizz_app/screens/shared/live_leaderboard_screen.dart';
+import 'package:classbizz_app/widgets/live_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:classbizz_app/providers/session_provider.dart';
-import 'package:classbizz_app/models/session_model.dart';
-import 'package:classbizz_app/models/attendee_model.dart';
 
 class SessionScreen extends StatelessWidget {
   final String sessionId;
-  const SessionScreen({super.key, required this.sessionId});
+  final String? lecturerId;
+  const SessionScreen({super.key, required this.sessionId, this.lecturerId});
 
   @override
   Widget build(BuildContext context) {
-    final sessionProvider = context.watch<SessionProvider>();
-    // final currentUser = context.watch<AuthProvider>().currentUser;
+    final sessionProvider = context.read<SessionProvider>();
+    final authProvider = context.watch<AuthProvider>();
+    final currentUser = authProvider.currentUser;
+    final userUid = currentUser?.uid;
 
-    // Listen to the session document (real-time)
-    return StreamBuilder<SessionModel?>(
-      stream: sessionProvider.sessionStream(sessionId),
-      builder: (context, sessionSnapshot) {
-        if (sessionSnapshot.connectionState == ConnectionState.waiting) {
+    if (userUid == null) {
+      return const Scaffold(body: Center(child: Text('User not logged in')));
+    }
+
+    // 1. Stream for User Data (Outermost layer, rarely rebuilds)
+    return StreamBuilder<UserModel?>(
+      stream: sessionProvider.userStream(userUid),
+      builder: (context, userSnapshot) {
+        if (userSnapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
-        if (!sessionSnapshot.hasData) {
-          return const Scaffold(body: Center(child: Text('Session not found')));
+
+        final userdata = userSnapshot.data;
+        if (userdata == null) {
+          return const Scaffold(
+            body: Center(child: Text('User data not found')),
+          );
         }
 
-        final session = sessionSnapshot.data!;
+        final bool isLecturer = !userdata.isStudent;
 
-        return Scaffold(
-          backgroundColor: Colors.white,
-          body: Column(
-            children: [
-              _buildHeader(session, context),
-              const SizedBox(height: 10),
-              StreamBuilder<List<AttendeeModel>>(
-                stream: sessionProvider.attendeeStream(sessionId),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const SizedBox(
-                      height: 24,
-                      child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
-                    );
-                  }
-                  final count = snapshot.data?.length ?? 0;
-                  return Text(
-                    '$count Students Participating',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+        // 2. Stream for Session Data (Middle layer, rebuilds if session details or status changes)
+        return StreamBuilder<SessionModel?>(
+          stream: sessionProvider.sessionStream(sessionId),
+          builder: (context, sessionSnapshot) {
+            if (sessionSnapshot.connectionState == ConnectionState.waiting) {
+              return const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            if (!sessionSnapshot.hasData) {
+              return const Scaffold(
+                body: Center(child: Text('Session not found')),
+              );
+            }
+
+            final session = sessionSnapshot.data!;
+
+            // Handle session ending and navigation
+            if (session.status == 'ended') {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (isLecturer) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const LecturerBottomNav(),
                     ),
                   );
-                },
-              ),
-              const SizedBox(height: 10),
+                } else {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => AfterSessionScreen(sessionId: session.sessionId, lecturerId: session.lecturerId),
+                    ),
+                  );
+                }
+              });
+              return const Center(child: CircularProgressIndicator());
+            }
 
-              // Live attendees list: we use a stream from the provider.
-              // The provider could expose Stream<List<AttendeeModel>> or Stream<QuerySnapshot>.
-              // Here I assume it exposes Stream<List<AttendeeModel>> via attendeesStream(sessionId).
-              Expanded(
-                child: StreamBuilder<List<AttendeeModel>>(
-                  stream: sessionProvider.attendeeStream(sessionId),
-                  builder: (context, attendeesSnapshot) {
-                    if (attendeesSnapshot.connectionState ==
-                        ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    final attendees = attendeesSnapshot.data ?? [];
+            // The main Scaffold starts here.
+            return Scaffold(
+              backgroundColor: const Color.fromARGB(255, 252, 251, 251),
+              body: Column(
+                children: [
+                  // Header is built here, it only rebuilds when SessionModel changes.
+                  _buildHeader(session, sessionProvider, context),
+                  const SizedBox(height: 10),
 
-                    if (attendees.isEmpty) {
-                      return const Center(child: Text('No students yet'));
-                    }
+                  // 3. Stream for Attendee Data (Innermost layer, rebuilds when students join/leave/points change)
+                  // Only this Expanded section should rebuild frequently.
+                  Expanded(
+                    child: StreamBuilder<List<AttendeeModel>>(
+                      stream: sessionProvider.attendeeStream(sessionId),
+                      builder: (context, attendeesSnapshot) {
+                        if (attendeesSnapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          );
+                        }
 
-                    return GridView.builder(
-                      padding: const EdgeInsets.all(12),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 10,
-                            childAspectRatio: 0.9,
-                          ),
-                      itemCount: attendees.length,
-                      itemBuilder: (context, index) {
-                        final a = attendees[index];
-                        final initials = _buildInitials(a.name);
-                        return StudentCard(
-                          sessionId: session.sessionId,
-                          attendee: a,
-                          initials: initials,
+                        final attendees = attendeesSnapshot.data ?? [];
+
+                        return Column(
+                          children: [
+                            Text(
+                              '${attendees.length} Students in the session',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Expanded(
+                              child: attendees.isEmpty
+                                  ? const Center(
+                                      child: Text('No student has joined yet'),
+                                    )
+                                  : GridView.builder(
+                                      padding: const EdgeInsets.all(12),
+                                      gridDelegate:
+                                          SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount:
+                                                MediaQuery.of(
+                                                      context,
+                                                    ).size.width >
+                                                    600
+                                                ? 5
+                                                : 3,
+                                            crossAxisSpacing: 10,
+                                            mainAxisSpacing: 10,
+                                            childAspectRatio: 0.8,
+                                          ),
+                                      itemCount: attendees.length,
+                                      itemBuilder: (context, index) {
+                                        final attendee = attendees[index];
+                                        final initials = _buildInitials(
+                                          attendee.name,
+                                        );
+                                        // StudentCard handles its OWN point animation via its internal StreamBuilder
+                                        return StudentCard(
+                                          key: ValueKey(attendee.uid),
+                                          sessionId: session.sessionId,
+                                          attendee: attendee,
+                                          initials: initials,
+                                          isLecturer: isLecturer,
+                                        );
+                                      },
+                                    ),
+                            ),
+                            const SizedBox(height: 10),
+                            // Action buttons at the bottom of the attendee list
+                            if (isLecturer)
+                              SizedBox(
+                                width: 100,
+                                height: 50,
+                                child: FloatingActionButton(
+                                  onPressed: () =>
+                                      sessionProvider.endSession(sessionId),
+                                  backgroundColor: Colors.red,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: const Text(
+                                    "End Session",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                            if (!isLecturer)
+                              SizedBox(
+                                width: 120,
+                                height: 50,
+                                child: FloatingActionButton(
+                                  onPressed: () {
+                                    sessionProvider.leaveSession(
+                                      sessionId: sessionId,
+                                      uid: currentUser!.uid,
+                                    );
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) =>
+                                            const StudentBottomNav(),
+                                      ),
+                                    );
+                                  },
+                                  backgroundColor: Colors.orange,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: const Text(
+                                    "Leave Session",
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                ),
+                              ),
+                            const SizedBox(
+                              height: 10,
+                            ), 
+                          ],
                         );
                       },
-                    );
-                  },
-                ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
   }
 
-  // Header: receives a SessionModel so it's pure and testable
-  Widget _buildHeader(SessionModel session, BuildContext context) {
+  Widget _buildHeader(SessionModel session, SessionProvider sessionProvider, BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -117,17 +235,12 @@ class SessionScreen extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: const [
-                  Spacer(),
-                  Icon(Icons.bar_chart, color: Colors.white),
-                ],
-              ),
-              const SizedBox(height: 5),
+              /// --- Top Row: Session Name + Actions ---
               Row(
                 children: [
-                  Flexible(
+                  Expanded(
                     child: Text(
                       session.name,
                       style: const TextStyle(
@@ -138,50 +251,89 @@ class SessionScreen extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  if (session.topic != null)
-                    Flexible(
-                      child: Text(
-                        session.topic!,
-                        style: const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 14,
+
+                  IconButton(
+                    icon: const Icon(Icons.bar_chart, color: Colors.white),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => LiveLeaderboardScreen(
+                            sessionId: session.sessionId,
+                          ),
                         ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
+                      );
+                    },
+                  ),
                 ],
               ),
-              const SizedBox(height: 8),
+
+              const SizedBox(height: 6),
+
+              /// --- Topic (Optional) ---
+              if (session.topic != null)
+                Text(
+                  session.topic!,
+                  style: const TextStyle(color: Colors.white70, fontSize: 14),
+                  overflow: TextOverflow.ellipsis,
+                ),
+
+              const SizedBox(height: 12),
+
+              /// --- Lecturer Name ---
+              StreamBuilder(
+                stream: sessionProvider.userStream(session.lecturerId),
+                builder: (context, snapshot) {
+                  final lecturerName = snapshot.hasData
+                      ? snapshot.data!.name
+                      : 'Lecturer';
+
+                  return Text(
+                    'Lecturer: $lecturerName',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  );
+                },
+              ),
+
+              const SizedBox(height: 10),
               Row(
                 children: [
                   Text(
                     'Code: ${session.sessionId}',
                     style: const TextStyle(color: Colors.white70),
                   ),
-                  const SizedBox(width: 8),
-                  IconButton(
-                    icon: const Icon(
+
+                  const SizedBox(width: 6),
+
+                  GestureDetector(
+                    onTap: () {
+                      Clipboard.setData(ClipboardData(text: session.sessionId));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Copied session code')),
+                      );
+                    },
+                    child: const Icon(
                       Icons.copy,
                       color: Colors.white70,
                       size: 18,
                     ),
-                    onPressed: () {
-                      // Copy code to clipboard
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Copied session code')),
-                      );
-                      Clipboard.setData(ClipboardData(text: session.sessionId));
-                    },
                   ),
+
+                  const Spacer(),
+
+                  const LiveIndicator(),
                 ],
               ),
-              const SizedBox(height: 6),
             ],
           ),
         ),
       ),
     );
+
   }
 
   static String _buildInitials(String name) {
@@ -193,17 +345,19 @@ class SessionScreen extends StatelessWidget {
   }
 }
 
-// ---------------- Student Card (separate widget) ----------------
+// ---------------- Student Card ----------------
 class StudentCard extends StatefulWidget {
   final String sessionId;
   final AttendeeModel attendee;
   final String initials;
+  final bool isLecturer;
 
   const StudentCard({
     super.key,
     required this.sessionId,
     required this.attendee,
     required this.initials,
+    required this.isLecturer,
   });
 
   @override
@@ -212,61 +366,78 @@ class StudentCard extends StatefulWidget {
 
 class _StudentCardState extends State<StudentCard>
     with SingleTickerProviderStateMixin {
-  late int currentPoints;
+  // Removed: late int localPoints;
+
   late AnimationController _controller;
   late Animation<double> _scale;
+  late Animation<Color?> _colorAnimation;
+
+  // New: Store the last known point value from the stream to compare against
+  int _lastPoints = 0;
 
   @override
   void initState() {
     super.initState();
-    currentPoints = widget.attendee.points;
+    _lastPoints = widget.attendee.points; // Initialize with the starting value
+
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 400),
     );
+
     _scale =
         Tween<double>(begin: 1.0, end: 1.35).animate(
           CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-        )..addStatusListener((s) {
-          if (s == AnimationStatus.completed) _controller.reverse();
+        )..addStatusListener((status) {
+          if (status == AnimationStatus.completed) _controller.reverse();
         });
+
+    _colorAnimation = ColorTween(
+      begin: Colors.black,
+      end: Colors.green,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
-  Future<void> _award(int pts) async {
-    // optimistic local update + animation
-    setState(() => currentPoints += pts);
+  void _awardAnimation() {
+    _controller.reset();
     _controller.forward();
-
-    // call provider to update Firestore (this will cause the stream to emit updated data)
-    try {
-      final provider = context.read<SessionProvider>();
-      await provider.awardPoints(
-        sessionId: widget.sessionId,
-        uid: widget.attendee.uid,
-        points: pts,
-      );
-      // provider's stream will push the updated value to everyone; local optimistic update already done
-    } catch (e) {
-      // on error, roll back local change and show error
-      setState(() => currentPoints -= pts);
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Failed to award points: $e')));
-      }
-    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final sessionProvider = context.read<SessionProvider>();
+
+    // Each card listens to its own attendee stream (Optimal isolation)
+    return StreamBuilder<AttendeeModel?>(
+      stream: sessionProvider.attendeeStreamByUid(
+        widget.sessionId,
+        widget.attendee.uid,
+      ),
+      builder: (context, snapshot) {
+        // Use the snapshot data, fallback to initial widget data if null
+        final attendee = snapshot.data ?? widget.attendee;
+
+        // Check if points have increased from the last recorded value
+        if (attendee.points > _lastPoints) {
+          _awardAnimation();
+        }
+        // Update the last recorded points
+        _lastPoints = attendee.points;
+
+        return _buildCard(attendee);
+      },
+    );
+  }
+
+  Widget _buildCard(AttendeeModel attendee) {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color.fromARGB(255, 229, 242, 141),
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
-            color: Colors.grey.shade200,
+            color: Color.fromARGB(255, 190, 187, 187),
             spreadRadius: 1,
             blurRadius: 6,
           ),
@@ -275,42 +446,64 @@ class _StudentCardState extends State<StudentCard>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircleAvatar(
-            backgroundColor: const Color(0xFF4A90E2),
-            radius: 18,
-            child: Text(
-              widget.initials,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
+          ScaleTransition(
+            scale: _scale,
+            child: CircleAvatar(
+              backgroundColor: const Color(0xFF4A90E2),
+              radius: 18,
+              child: Text(
+                widget.initials,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
           const SizedBox(height: 6),
           Text(
-            widget.attendee.name,
+            attendee.name,
             style: const TextStyle(fontSize: 13),
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 6),
-          ScaleTransition(
-            scale: _scale,
-            child: Text(
-              '$currentPoints pts',
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
+          // --- POINTS DISPLAY WITH ANIMATION ---
+          AnimatedBuilder(
+            animation: _controller,
+            builder: (context, child) {
+              return Transform.scale(
+                scale: _scale.value,
+                child: TweenAnimationBuilder<int>(
+                  // TweenAnimationBuilder handles the smooth number update automatically
+                  // The `end` value comes directly from the current stream snapshot (attendee.points)
+                  tween: IntTween(begin: attendee.points, end: attendee.points),
+                  duration: const Duration(milliseconds: 400),
+                  builder: (context, value, child) {
+                    return Text(
+                      '${attendee.points} pts', // Use attendee.points directly as the source of truth
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: _colorAnimation.value,
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
           ),
           const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildPointButton('+5', Colors.green, 5),
-              _buildPointButton('+3', Colors.blue, 3),
-              _buildPointButton('+1', Colors.orange, 1),
-            ],
-          ),
+          // --- LECTURER BUTTONS ---
+          if (widget.isLecturer)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildPointButton('+5', Colors.green, 5),
+                _buildPointButton('+3', Colors.blue, 3),
+                _buildPointButton('+1', Colors.orange, 1),
+              ],
+            ),
         ],
       ),
     );
@@ -318,7 +511,14 @@ class _StudentCardState extends State<StudentCard>
 
   Widget _buildPointButton(String label, Color color, int pts) {
     return GestureDetector(
-      onTap: () => _award(pts),
+      onTap: () async {
+        final provider = context.read<SessionProvider>();
+        await provider.awardPoints(
+          sessionId: widget.sessionId,
+          uid: widget.attendee.uid,
+          points: pts,
+        );
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
         decoration: BoxDecoration(

@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/users_model.dart';
 import 'firestore_service.dart';
@@ -14,6 +14,7 @@ class AuthService {
     String name,
     String email,
     String password, {
+    int? points = 0,
     bool? isStudent,
   }) async {
     try {
@@ -53,6 +54,7 @@ class AuthService {
         uid: user.uid,
         name: name,
         email: email,
+        points: points ?? 0,
         isStudent: isStudent,
         profilepic: '',
       );
@@ -132,10 +134,10 @@ class AuthService {
   Future<void> signOut() async {
     await _auth.signOut();
   }
-}
 
-Future<DocumentSnapshot<Map<String, dynamic>>> getUserdata(String uid) async {
-  DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
-      await FirebaseFirestore.instance.collection('users').doc(uid).get();
-  return documentSnapshot;
+  Future<UserModel?> signInWithGoogle() async {
+    
+    throw UnimplementedError('Google Sign-In not implemented yet.');
+  }
+
 }

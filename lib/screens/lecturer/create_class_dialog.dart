@@ -25,6 +25,7 @@ class _CreateClassDialogState extends State<CreateClassDialog> {
     final user = context.watch<AuthProvider>().currentUser;
     final sessionProvider = context.watch<SessionProvider>();
     final isLoading = sessionProvider.isLoading;
+    // final lecturerId = user?.uid ?? '';
 
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -140,7 +141,7 @@ class _CreateClassDialogState extends State<CreateClassDialog> {
                         context,
                         MaterialPageRoute(
                           builder: (_) =>
-                              SessionScreen(sessionId: newSession.sessionId),
+                              SessionScreen(sessionId: newSession.sessionId, lecturerId: newSession.lecturerId),
                         ),
                       );
                     } catch (e) {

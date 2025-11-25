@@ -1,3 +1,4 @@
+import 'package:classbizz_app/providers/session_provider.dart';
 import 'package:flutter/material.dart';
 import '../../providers/auth_provider.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +11,7 @@ class LecturerDashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = context.watch<AuthProvider>().currentUser;
+    final SessionProvider sessionProvider = context.watch<SessionProvider>();
     return Scaffold(
       backgroundColor: Colors.grey[100],
       body: Column(
@@ -107,29 +109,27 @@ class LecturerDashboardScreen extends StatelessWidget {
                         Row(
                           children: [
                             Expanded(
-                              child: ElevatedButton.icon(
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => CreateClassDialog(),
-                                  );
-                                  // Navigator.push(
-                                  //   context,
-                                  //   MaterialPageRoute(
-                                  //     builder: (context) => const CreateSessionScreen(),
-                                  //   ),
-                                  // );
-                                },
-                                icon: const Icon(Icons.add, color: Colors.white),
-                                label: const Text(
-                                  'Start Class',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF4A90E2),
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
+                              child: SizedBox(
+                                height: 54,
+                                child: ElevatedButton.icon(
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => CreateClassDialog(),
+                                    );
+                                    
+                                  },
+                                  icon: const Icon(Icons.add, color: Colors.white),
+                                  label: const Text(
+                                    'Start Class',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color.fromARGB(255, 49, 109, 179),
+                                    padding: const EdgeInsets.symmetric(vertical: 12),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -165,30 +165,30 @@ class LecturerDashboardScreen extends StatelessWidget {
                   const SizedBox(height: 10),
                   // Activity items
                   Expanded(
-                    child: ListView(
-                      children: [
-                        _buildActivityItem(
-                          'Advanced Frontend Dev',
-                          '28 students',
-                          'completed',
-                          '2 hours ago',
-                          Colors.blue,
-                        ),
-                        _buildActivityItem(
-                          'Data Structures',
-                          '32 students',
-                          'upcoming',
-                          'Tomorrow 10:00 AM',
-                          Colors.green,
-                        ),
-                        _buildActivityItem(
-                          'Computer Networks',
-                          '25 students',
-                          'upcoming',
-                          'Wednesday 2:00 PM',
-                          Colors.green,
-                        ),
-                      ],
+                    child: StreamBuilder<List<dynamic>>(
+                      stream: sessionProvider.getSessionsByLecturerId(user!.uid),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+                        if (snapshot.hasError) {
+                          return Center(child: Text('Error: ${snapshot.error}'));
+                        }
+                        final sessions = snapshot.data;
+                        if (sessions == null || sessions.isEmpty) {
+                          return const Center(child: Text('No sessions found.'));
+                        }
+                        return ListView.builder(
+                          itemCount: sessions.length,
+                          itemBuilder: (context, index) {
+                            final session = sessions[index];
+                            return _buildActivityItem(
+                              session.name,
+                              session.status,
+                            );
+                          },
+                        );
+                      },
                     ),
                   ),
                 ],
@@ -197,21 +197,19 @@ class LecturerDashboardScreen extends StatelessWidget {
           ),
         ],
       ),
-bottomNavigationBar: Container(
-        height: 60,
-        color: Colors.white,
-        // Bottom navigation will be imported and called here
-      ),
+// bottomNavigationBar: Container(
+//         height: 60,
+//         color: Colors.white,
+//         // Bottom navigation will be imported and called here
+//       ),
     );
   }
 
  
   Widget _buildActivityItem(
     String title,
-    String students,
     String status,
-    String time,
-    Color statusColor,
+  
   ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -242,13 +240,7 @@ bottomNavigationBar: Container(
                   ),
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  students,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                  ),
-                ),
+                
               ],
             ),
           ),
@@ -258,7 +250,7 @@ bottomNavigationBar: Container(
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: statusColor,
+                  color: Colors.blue,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -271,13 +263,7 @@ bottomNavigationBar: Container(
                 ),
               ),
               const SizedBox(height: 4),
-              Text(
-                time,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
-              ),
+            
             ],
           ),
         ],
