@@ -38,6 +38,7 @@ class SessionProvider extends ChangeNotifier {
     required String sessionId,
     required String uid,
     required String name,
+    required int points,
   }) async {
     isLoading = true;
     notifyListeners();
@@ -46,6 +47,7 @@ class SessionProvider extends ChangeNotifier {
         sessionId: sessionId,
         uid: uid,
         name: name,
+        points: points,
       );
     } finally {
       isLoading = false;
@@ -107,15 +109,29 @@ class SessionProvider extends ChangeNotifier {
     required String uid,
     required int points,
   }) async {
+  
     await _sessionService.awardPoints(
       sessionId: sessionId,
       uid: uid,
       points: points,
     );
-    notifyListeners();
+    
   }
 
   Stream<UserModel?> userStream(String uid) {
     return _sessionService.userStream(uid);
+  }
+
+  Stream<AttendeeModel?> attendeeStreamByUid(String sessionId, String uid) {
+    return _sessionService.attendeeStreamByUid(sessionId, uid);
+  }
+
+  Future<UserModel?> fetchUserData(String uid) async {
+    try {
+      final data = await _sessionService.fetchUserData(uid);
+      return data;
+    } catch (e) {
+      throw 'Failed to fetch user data: $e';
+    }
   }
 }

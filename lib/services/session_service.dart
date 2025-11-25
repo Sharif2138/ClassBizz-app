@@ -45,11 +45,12 @@ class SessionService {
     required String sessionId,
     required String uid,
     required String name,
+    required int points,
   }) async {
     final session = await _firestoreService.getSession(sessionId);
     if (session == null) throw Exception('Session not found');
 
-    await _firestoreService.addOrUpdateAttendee(sessionId, uid, name);
+    await _firestoreService.addOrUpdateAttendee(sessionId, uid, name, points);
   }
 
   /// Student leaves a session
@@ -97,5 +98,17 @@ class SessionService {
 
   Stream<UserModel?> userStream(String uid) {
     return _firestoreService.getUserStream(uid);
+  }
+
+  Stream<AttendeeModel?> attendeeStreamByUid(String sessionId, String uid) {
+    return _firestoreService.attendeeStreamByUid(sessionId, uid);
+  }
+  Future<UserModel?> fetchUserData(String uid) async {
+    try {
+      final data = await FirestoreService().getUser(uid);
+      return data;
+    } catch (e) {
+      throw 'Failed to fetch user data: $e';
+    }
   }
 }

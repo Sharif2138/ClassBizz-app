@@ -1,3 +1,4 @@
+import 'package:classbizz_app/providers/review_provider.dart';
 import 'package:classbizz_app/screens/aunthentication/home_screen.dart';
 
 import 'package:classbizz_app/screens/student/student_dashboard_screen.dart';
@@ -29,6 +30,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider<AuthProvider>(create: (_) => AuthProvider()),
         ChangeNotifierProvider<SessionProvider>(create: (_) => SessionProvider()),
+        ChangeNotifierProvider<ReviewProvider>(create: (_) => ReviewProvider()),
       ],
       child: const ClassBizzApp(),
     ),

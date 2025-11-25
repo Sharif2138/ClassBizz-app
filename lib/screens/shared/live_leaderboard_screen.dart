@@ -28,7 +28,6 @@ class LiveLeaderboardScreen extends StatelessWidget {
             ),
             const SizedBox(width: 10),
 
-            /// GREEN GLOWING LIVE INDICATOR
             LiveIndicator(),
           ],
         ),
