@@ -84,4 +84,4 @@ jobs:
           - Built with --no-tree-shake-icons flag
         draft: false
         prerelease: false
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.TOKEN }}
