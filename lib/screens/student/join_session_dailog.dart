@@ -63,11 +63,9 @@ class _JoinClassDialogState extends State<JoinClassDialog> {
                     setState(() => _isLoading = true);
 
                     try {
-                     final userdata = await sessionProvider.fetchUserData(user!.uid);
                       await sessionProvider.joinSession(
                         sessionId: code,
-                        name: user.displayName!,
-                        points: userdata!.points,
+                        name: user!.displayName!,
                         uid: user.uid,
                       );
 

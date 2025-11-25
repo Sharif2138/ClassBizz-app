@@ -1,16 +1,23 @@
-import 'package:classbizz_app/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../providers/auth_provider.dart';
+import '../../providers/review_provider.dart';
+import '../../models/review_model.dart';
 
 class LecturerProfileScreen extends StatelessWidget {
   const LecturerProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-  final user = context.watch<AuthProvider>().currentUser;
+    final user = context.watch<AuthProvider>().currentUser;
+    final reviewProvider = context.watch<ReviewProvider>();
+
+    if (user == null) {
+      return const Scaffold(body: Center(child: Text('User not logged in')));
+    }
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
-
       body: Column(
         children: [
           // ---------------- HEADER ----------------
@@ -30,7 +37,6 @@ class LecturerProfileScreen extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-
                         const Spacer(),
                         const Text(
                           "Profile",
@@ -47,86 +53,116 @@ class LecturerProfileScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 20),
 
+                    // Profile info row
                     Row(
                       children: [
-                        const SizedBox(width: 20),
                         Column(
                           children: [
                             const CircleAvatar(
                               radius: 45,
                               backgroundColor: Colors.white,
-                              child: Icon(Icons.person, size: 55, color: Colors.grey),
-                            ),
-                            const SizedBox(height: 15),
-                            Icon(
-                              Icons.star,
-                              color: Color.fromARGB(255, 208, 214, 9),
-                              size: 20,
-                            ),
-                            SizedBox(height: 5),
-                            Text(
-                              "4.8",
-                              style: TextStyle(
-                                color: Color.fromARGB(255, 3, 8, 13),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 13,
+                              child: Icon(
+                                Icons.person,
+                                size: 55,
+                                color: Colors.grey,
                               ),
                             ),
+                            const SizedBox(height: 15),
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.star,
+                                  color: Colors.amber,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 5),
+                                // Stream for average rating
+                                StreamBuilder<double>(
+                                  stream: reviewProvider.fetchAverageRating(
+                                    user.uid,
+                                  ),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const SizedBox(
+                                        width: 16,
+                                        height: 16,
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                          strokeWidth: 2,
+                                        ),
+                                      );
+                                    }
+                                    final avg = snapshot.data ?? 0.0;
+                                    return Text(
+                                      avg.toStringAsFixed(1),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
                           ],
                         ),
-
-                        const SizedBox(width: 50),
-                        
-                        Column(
-                          children: [
-                            Text(
-                                                  user?.displayName ?? 'No Name',
-                                                  style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                            const Text(
-                      "Lecturer",
-                      style: TextStyle(color: Colors.white70),
-                    ),
-                    Text(
-                      user?.email ?? 'No Email',
-                      style: const TextStyle(color: Colors.white70),
-                    ), 
-                    
-                    const SizedBox(height: 20),
-                  SizedBox(
-                      width: 110,
-                      height: 40,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          final AuthProvider auth = context
-                              .read<AuthProvider>();
-                          auth.signOut();
-                          
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(255, 205, 36, 2),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                        const SizedBox(width: 40),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                user.displayName ?? 'No Name',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                'Lecturer',
+                                style: const TextStyle(color: Colors.white70),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                user.email ?? 'No Email',
+                                style: const TextStyle(color: Colors.white70),
+                              ),
+                              const SizedBox(height: 20),
+                              SizedBox(
+                                width: 110,
+                                height: 40,
+                                child: ElevatedButton(
+                                  onPressed: () =>
+                                      context.read<AuthProvider>().signOut(),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color.fromARGB(
+                                      255,
+                                      205,
+                                      36,
+                                      2,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'Logout',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                        child: const Text(
-                          'Logout',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),                   
-                          ],
                         ),
                       ],
                     ),
@@ -136,216 +172,93 @@ class LecturerProfileScreen extends StatelessWidget {
             ),
           ),
 
-         
-
-          // ---------------- MAIN CONTENT (SCROLLABLE) ----------------
+          // ---------------- MAIN CONTENT ----------------
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // ---------- Recent Reviews ----------
                   const Text(
                     "Recent Reviews",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-
                   const SizedBox(height: 12),
 
-                  // Review 1
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    margin: const EdgeInsets.only(bottom: 12),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(14),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.1),
-                          blurRadius: 6,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            const CircleAvatar(
-                              radius: 17,
-                              backgroundColor: Color(0xFF4A90E2),
-                              child: Text(
-                                "G",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            const Text(
-                              "Grace N.",
-                              style: TextStyle(fontWeight: FontWeight.w600),
-                            ),
-                            const Spacer(),
-                            Text(
-                              "2 days ago",
-                              style: TextStyle(color: Colors.grey[600]),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: List.generate(
-                            5,
-                            (index) => const Icon(
-                              Icons.star,
-                              size: 14,
-                              color: Colors.orange,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          "Excellent teaching style and very engaging!",
-                        ),
-                      ],
-                    ),
-                  ),
+                  // Stream for recent reviews
+                  StreamBuilder<List<ReviewModel>>(
+                    stream: reviewProvider.fetchReviewsByLecturerId(user.uid),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      }
+                      final reviews = snapshot.data ?? [];
+                      if (reviews.isEmpty) {
+                        return const Text('No reviews yet.');
+                      }
 
-                  // Review 2
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    margin: const EdgeInsets.only(bottom: 12),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(14),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.1),
-                          blurRadius: 6,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            const CircleAvatar(
-                              radius: 17,
-                              backgroundColor: Color(0xFF4A90E2),
-                              child: Text(
-                                "J",
-                                style: TextStyle(color: Colors.white),
-                              ),
+                      return Column(
+                        children: reviews.map((review) {
+                          return Container(
+                            padding: const EdgeInsets.all(16),
+                            margin: const EdgeInsets.only(bottom: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(14),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.1),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
                             ),
-                            const SizedBox(width: 10),
-                            const Text(
-                              "John M.",
-                              style: TextStyle(fontWeight: FontWeight.w600),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 17,
+                                      backgroundColor: const Color(0xFF4A90E2),
+                                      child: Text(
+                                        review.description
+                                            .substring(0, 1)
+                                            .toUpperCase(),
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Text(
+                                        review.description,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      '${review.rating} ⭐',
+                                      style: const TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                Text(review.description),
+                              ],
                             ),
-                            const Spacer(),
-                            Text(
-                              "1 week ago",
-                              style: TextStyle(color: Colors.grey[600]),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            ...List.generate(
-                              4,
-                              (i) => const Icon(
-                                Icons.star,
-                                size: 14,
-                                color: Colors.orange,
-                              ),
-                            ),
-                            Icon(Icons.star, size: 14, color: Colors.grey[300]),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          "Clear explanations, could use more examples.",
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                 
-                  const SizedBox(height: 20),
-
-                  // ---------- Settings ----------
-                  const Text(
-                    "Settings",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  // Setting 1
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    margin: const EdgeInsets.only(bottom: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(14),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.08),
-                          blurRadius: 6,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: const [
-                        Icon(Icons.notifications_outlined),
-                        SizedBox(width: 16),
-                        Text("Notifications"),
-                        Spacer(),
-                        Switch(value: true, onChanged: null),
-                      ],
-                    ),
-                  ),
-
-                  // Setting 2
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    margin: const EdgeInsets.only(bottom: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: Row(
-                      children: const [
-                        Icon(Icons.language),
-                        SizedBox(width: 16),
-                        Text("Language"),
-                        Spacer(),
-                        Icon(Icons.arrow_forward_ios, size: 16),
-                      ],
-                    ),
-                  ),
-
-                  // Setting 3
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: Row(
-                      children: const [
-                        Icon(Icons.privacy_tip_outlined),
-                        SizedBox(width: 16),
-                        Text("Privacy"),
-                        Spacer(),
-                        Icon(Icons.arrow_forward_ios, size: 16),
-                      ],
-                    ),
+                          );
+                        }).toList(),
+                      );
+                    },
                   ),
                 ],
               ),

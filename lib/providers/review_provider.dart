@@ -50,16 +50,11 @@ class ReviewProvider extends ChangeNotifier {
   }
 
   /// Calculate average rating for a lecturer
-  Future<void> fetchAverageRating(String lecturerId) async {
-    isLoading = true;
-    notifyListeners();
-    try {
-      averageRating = await _reviewService.getAverageRating(lecturerId);
-    } catch (e) {
-      rethrow;
-    } finally {
-      isLoading = false;
-      notifyListeners();
-    }
+  Stream<double> fetchAverageRating(String lecturerId)  {
+    return _reviewService.getAverageRating(lecturerId);
+  }
+
+  Stream<List<ReviewModel>> fetchReviewsByLecturerId(String lecturerId)  {
+    return _reviewService.getReviewsByLecturerId(lecturerId);
   }
 }

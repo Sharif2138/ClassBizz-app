@@ -37,8 +37,8 @@ class SessionProvider extends ChangeNotifier {
   Future<void> joinSession({
     required String sessionId,
     required String uid,
-    required String name,
-    required int points,
+    required String name, 
+
   }) async {
     isLoading = true;
     notifyListeners();
@@ -47,7 +47,6 @@ class SessionProvider extends ChangeNotifier {
         sessionId: sessionId,
         uid: uid,
         name: name,
-        points: points,
       );
     } finally {
       isLoading = false;
@@ -134,4 +133,31 @@ class SessionProvider extends ChangeNotifier {
       throw 'Failed to fetch user data: $e';
     }
   }
+
+  Stream<List<SessionModel>> getSessionsByLecturerId(String lecturerId)  {
+    return  _sessionService.getSessionsByLecturerId(lecturerId);
+  }
+
+  Stream<List<SessionModel?>> getSessionsByAttendeeId(String attendeeId) {
+    try{
+      final sessions = _sessionService.getSessionsByAttendeeId(attendeeId);
+    return sessions;
+    } catch (e) {
+      throw 'Failed to fetch sessions: $e';
+    }
+  }
+
+  Stream<int>getStudentRanking( String uid) {
+    return _sessionService.getStudentRanking( uid);
+  }
+
+  Stream<int>getTotalPoints(String uid) {
+    return _sessionService.getTotalPoints(uid);
+  }
+
+  Stream<int>getTotalAttendedSessions(String uid) {
+    return _sessionService.getTotalAttendedSessions(uid);
+  }
+
+  Stream<int> getTotalPointsInSession(String sessionId, String uid) => _sessionService.getTotalPointsInSession(sessionId, uid);
 }

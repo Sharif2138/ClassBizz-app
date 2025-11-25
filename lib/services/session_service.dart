@@ -45,12 +45,11 @@ class SessionService {
     required String sessionId,
     required String uid,
     required String name,
-    required int points,
   }) async {
     final session = await _firestoreService.getSession(sessionId);
     if (session == null) throw Exception('Session not found');
 
-    await _firestoreService.addOrUpdateAttendee(sessionId, uid, name, points);
+    await _firestoreService.addOrUpdateAttendee(sessionId, uid, name);
   }
 
   /// Student leaves a session
@@ -111,4 +110,26 @@ class SessionService {
       throw 'Failed to fetch user data: $e';
     }
   }
+
+  Stream<List<SessionModel>> getSessionsByLecturerId(String lecturerId)  {
+    return  _firestoreService.getSessionsByLecturerId(lecturerId);
+  }
+
+  Stream<List<SessionModel?>> getSessionsByAttendeeId(String attendeeId)  {
+    return _firestoreService.getSessionsByAttendeeIdStream(attendeeId);
+  }
+
+  Stream<int>getStudentRanking( String uid) {
+    return _firestoreService.getStudentRanking( uid);
+  }
+
+  Stream<int>getTotalPoints(String uid) {
+    return _firestoreService.getTotalPoints(uid);
+  }
+
+  Stream<int>getTotalAttendedSessions(String uid) {
+    return _firestoreService.getTotalAttendedSessions(uid);
+  }
+
+  Stream<int> getTotalPointsInSession(String sessionId, String uid) => _firestoreService.getTotalPointsInSession(sessionId, uid);
 }

@@ -16,15 +16,16 @@ class ReviewModel {
   });
 
   factory ReviewModel.fromFirestore(DocumentSnapshot doc) {
-    final map = doc.data()! as Map<String, dynamic>;
+    final map = doc.data() as Map<String, dynamic>? ?? {};
     return ReviewModel(
-      sessionId: map['sessionId'] as String,
-      lecturerId: map['lecturerId'] as String,
-      rating: map['rating'] as int,
-      description: map['description'] as String,
-      createdAt: (map['createdAt'] as Timestamp).toDate(),
+      sessionId: map['sessionId'] as String? ?? '',
+      lecturerId: map['lecturerId'] as String? ?? '',
+      rating: map['rating'] as int? ?? 0,
+      description: map['description'] as String? ?? '',
+      createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
     );
   }
+
 
   Map<String, dynamic> toMap() {
     return {

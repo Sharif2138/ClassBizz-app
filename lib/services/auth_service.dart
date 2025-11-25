@@ -136,15 +136,9 @@ class AuthService {
     await _auth.signOut();
   }
 
-  // Future<UserModel?> getUserdata(String uid) async {
-  //   DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
-  //       await FirebaseFirestore.instance.collection('users').doc(uid).get();
-  //   if (documentSnapshot.exists) {
-  //     return UserModel.fromFirestore(documentSnapshot);
-  //   }
-  //   return null;
-  // }
-
-  
+  Future<UserModel?> signInWithGoogle() async {
+    
+    throw UnimplementedError('Google Sign-In not implemented yet.');
+  }
 
 }

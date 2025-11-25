@@ -23,8 +23,12 @@ class ReviewService {
     return await _firestoreService.getReviewsBySession(sessionId);
   }
 
-  Future<double> getAverageRating(String lecturerId) async {
-    return await _firestoreService.getAverageRating(lecturerId);
+  Stream<List<ReviewModel>> getReviewsByLecturerId(String lecturerId)  {
+    return  _firestoreService.getReviewsByLecturerId(lecturerId);
+  }
+
+  Stream<double> getAverageRating(String lecturerId) {
+    return _firestoreService.getAverageRating(lecturerId);
   }
 
 }

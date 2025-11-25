@@ -19,7 +19,7 @@ class SessionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sessionProvider = context.watch<SessionProvider>();
+    final sessionProvider = context.read<SessionProvider>();
     final authProvider = context.watch<AuthProvider>();
     final currentUser = authProvider.currentUser;
     final userUid = currentUser?.uid;
@@ -149,6 +149,7 @@ class SessionScreen extends StatelessWidget {
                                         );
                                         // StudentCard handles its OWN point animation via its internal StreamBuilder
                                         return StudentCard(
+                                          key: ValueKey(attendee.uid),
                                           sessionId: session.sessionId,
                                           attendee: attendee,
                                           initials: initials,
@@ -206,7 +207,7 @@ class SessionScreen extends StatelessWidget {
                               ),
                             const SizedBox(
                               height: 10,
-                            ), // Add some padding below buttons
+                            ), 
                           ],
                         );
                       },
@@ -430,7 +431,6 @@ class _StudentCardState extends State<StudentCard>
 
   Widget _buildCard(AttendeeModel attendee) {
     return Container(
-      // ... (Rest of the container and column layout remains the same) ...
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: const Color.fromARGB(255, 229, 242, 141),
@@ -509,7 +509,6 @@ class _StudentCardState extends State<StudentCard>
     );
   }
 
-  // ... (rest of _buildPointButton and dispose methods remain the same) ...
   Widget _buildPointButton(String label, Color color, int pts) {
     return GestureDetector(
       onTap: () async {
