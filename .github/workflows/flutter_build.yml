@@ -85,3 +85,4 @@ jobs:
         draft: false
         prerelease: false
         token: ${{ secrets.GITHUB_TOKEN }}
+        username: Sharif2138
