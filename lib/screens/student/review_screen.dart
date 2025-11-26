@@ -1,10 +1,36 @@
+import 'package:classbizz_app/screens/student/student_bottom_nav.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:classbizz_app/providers/review_provider.dart';
 
-class ReviewScreen extends StatelessWidget {
-  const ReviewScreen({super.key});
+class ReviewScreen extends StatefulWidget {
+  final String sessionId;
+  final String lecturerId;
+
+  const ReviewScreen({
+    super.key,
+    required this.sessionId,
+    required this.lecturerId,
+  });
+
+  @override
+  State<ReviewScreen> createState() => _ReviewScreenState();
+}
+
+class _ReviewScreenState extends State<ReviewScreen> {
+  int _rating = 0;
+  final TextEditingController _feedbackController = TextEditingController();
+
+  @override
+  void dispose() {
+    _feedbackController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final reviewProvider = context.watch<ReviewProvider>();
+
     return Scaffold(
       backgroundColor: const Color(0xFFF6F7FB),
       body: SafeArea(
@@ -21,16 +47,7 @@ class ReviewScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const _SessionSummaryCard(
-                      courseTitle: "Mathematics III - Calculus",
-                      lecturerName: "Dr. Sarah",
-                      sessionCode: "MATH301A",
-                      sessionDate: "10/5/2025",
-                    ),
-
-                    const SizedBox(height: 26),
-
-                    // Rating section
+                    const SizedBox(height: 18),
                     const Text(
                       "How was today's class?",
                       style: TextStyle(
@@ -39,7 +56,13 @@ class ReviewScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    const _RatingBar(),
+                    RatingBar(
+                      onRatingSelected: (int rating) {
+                        setState(() {
+                          _rating = rating;
+                        });
+                      },
+                    ),
                     const SizedBox(height: 6),
                     Text(
                       "Tap a star to rate",
@@ -48,27 +71,24 @@ class ReviewScreen extends StatelessWidget {
                         fontSize: 12,
                       ),
                     ),
-
                     const SizedBox(height: 22),
-
-                    // Text feedback
                     const Text(
-                      "Share your thoughts (optional)",
+                      "Share your thoughts",
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 15,
                       ),
                     ),
                     const SizedBox(height: 10),
-
                     Container(
                       decoration: BoxDecoration(
                         color: const Color(0xFFEFF3F9),
                         borderRadius: BorderRadius.circular(16),
                       ),
-                      child: const TextField(
+                      child: TextField(
+                        controller: _feedbackController,
                         maxLines: 5,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText:
                               "What did you enjoy? Any suggestions for improvement?",
                           border: InputBorder.none,
@@ -79,74 +99,70 @@ class ReviewScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-
-                    const SizedBox(height: 24),
-
-                    // Quick feedback tags
-                    const Text(
-                      "Quick feedback",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 15,
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-
-                    Wrap(
-                      spacing: 10,
-                      runSpacing: 10,
-                      children: const [
-                        _FeedbackChip(
-                          icon: Icons.check_circle_outline,
-                          label: "Clear explanations",
-                        ),
-                        _FeedbackChip(
-                          icon: Icons.lightbulb_outline,
-                          label: "Engaging content",
-                        ),
-                        _FeedbackChip(
-                          icon: Icons.speed,
-                          label: "Pace was good",
-                        ),
-                        _FeedbackChip(
-                          icon: Icons.slow_motion_video,
-                          label: "Pace too fast",
-                        ),
-                        _FeedbackChip(
-                          icon: Icons.menu_book_outlined,
-                          label: "More examples needed",
-                        ),
-                        _FeedbackChip(
-                          icon: Icons.shield_moon_outlined,
-                          label: "Felt safe to speak",
-                        ),
-                      ],
-                    ),
-
                     const SizedBox(height: 32),
-
-                    // Submit button (UI only)
                     SizedBox(
                       width: double.infinity,
                       height: 52,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: reviewProvider.isLoading
+                            ? null
+                            : () async {
+                                if (_rating == 0) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        "Please select a rating before submitting.",
+                                      ),
+                                    ),
+                                  );
+                                  return;
+                                }
+
+                                try {
+                                  await reviewProvider.submitReview(
+                                    sessionId: widget.sessionId,
+                                    lecturerId: widget.lecturerId,
+                                    rating: _rating,
+                                    description: _feedbackController.text,
+                                  );
+
+                                  if (mounted) {
+                                    Navigator.of(context).pushReplacement(
+                                      MaterialPageRoute(
+                                        builder: (_) =>
+                                            const StudentBottomNav(),
+                                      ),
+                                    );
+                                  }
+                                } catch (error) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Failed to submit review: $error',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF0F68FF),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
                         ),
-                        child: const Text(
-                          "Submit Review",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
+                        child: reviewProvider.isLoading
+                            ? const CircularProgressIndicator(
+                                color: Colors.white,
+                              )
+                            : const Text(
+                                "Submit Review",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
                       ),
                     ),
-
                     const SizedBox(height: 42),
                   ],
                 ),
@@ -159,6 +175,7 @@ class ReviewScreen extends StatelessWidget {
   }
 }
 
+// ---------------- Top Bar ----------------
 class _TopBar extends StatelessWidget {
   final String title;
 
@@ -180,87 +197,40 @@ class _TopBar extends StatelessWidget {
   }
 }
 
-class _SessionSummaryCard extends StatelessWidget {
-  final String courseTitle;
-  final String lecturerName;
-  final String sessionCode;
-  final String sessionDate;
+// ---------------- Rating Bar ----------------
+class RatingBar extends StatefulWidget {
+  final void Function(int) onRatingSelected;
 
-  const _SessionSummaryCard({
-    required this.courseTitle,
-    required this.lecturerName,
-    required this.sessionCode,
-    required this.sessionDate,
-  });
+  const RatingBar({super.key, required this.onRatingSelected});
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFFEAF1FF), Color(0xFFE2FFF3)],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-        ),
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            courseTitle,
-            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            "with $lecturerName",
-            style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            "Session: $sessionCode • $sessionDate",
-            style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
-          ),
-        ],
-      ),
-    );
-  }
+  State<RatingBar> createState() => _RatingBarState();
 }
 
-class _RatingBar extends StatelessWidget {
-  const _RatingBar();
+class _RatingBarState extends State<RatingBar> {
+  int _currentRating = 0;
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: List.generate(5, (_) {
-        return Icon(
-          Icons.star_border_rounded,
-          size: 34,
-          color: Colors.grey.shade400,
+      children: List.generate(5, (index) {
+        final starIndex = index + 1;
+        return GestureDetector(
+          onTap: () {
+            setState(() {
+              _currentRating = starIndex;
+            });
+            widget.onRatingSelected(_currentRating);
+          },
+          child: Icon(
+            starIndex <= _currentRating
+                ? Icons.star
+                : Icons.star_border_rounded,
+            size: 34,
+            color: Colors.orange,
+          ),
         );
       }),
-    );
-  }
-}
-
-class _FeedbackChip extends StatelessWidget {
-  final IconData icon;
-  final String label;
-
-  const _FeedbackChip({required this.icon, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return FilterChip(
-      label: Text(label),
-      avatar: Icon(icon, size: 16, color: const Color(0xFF0F68FF)),
-      selected: false,
-      onSelected: (_) {},
-      selectedColor: const Color(0xFF0F68FF),
-      checkmarkColor: Colors.white,
     );
   }
 }

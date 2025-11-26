@@ -1,7 +1,8 @@
+import 'package:classbizz_app/main.dart';
 import 'package:classbizz_app/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import 'signup_screen.dart';
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -107,7 +108,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           } else {
                             // Successful login
                             if (mounted) {
-                              Navigator.pushReplacementNamed(context, '/');
+                             Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const AuthWrapper(),
+                          ),
+                        );
                             }
                           }
                         },
@@ -139,7 +145,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     const Text('Don’t have an account?'),
                     TextButton(
                       onPressed: () {
-                        Navigator.pushReplacementNamed(context, '/signup');
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SignUpScreen(),
+                          ),
+                        );
                       },
                       child: const Text("Sign Up"),
                     ),

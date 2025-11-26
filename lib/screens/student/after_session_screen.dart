@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'review_screen.dart';
 
 class AfterSessionScreen extends StatelessWidget {
-  const AfterSessionScreen({super.key});
+  final String sessionId;
+  final String lecturerId;
+  const AfterSessionScreen({super.key, required this.sessionId, required this.lecturerId});
 
   @override
   Widget build(BuildContext context) {
@@ -65,10 +67,10 @@ class AfterSessionScreen extends StatelessWidget {
                   width: double.infinity,
                   height: 50,
                   child: ElevatedButton(
-                    onPressed: () {
+                      onPressed: () {
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (_) => const ReviewScreen()),
+                        MaterialPageRoute(builder: (_) => ReviewScreen(sessionId: sessionId, lecturerId: lecturerId)),
                       );
                     },
                     style: ElevatedButton.styleFrom(

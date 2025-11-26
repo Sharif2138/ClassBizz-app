@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:classbizz_app/providers/review_provider.dart';
+import 'package:classbizz_app/screens/aunthentication/home_screen.dart';
 
 import 'package:classbizz_app/screens/student/student_dashboard_screen.dart';
 import 'package:classbizz_app/screens/lecturer/lecturer_dashboard_screen.dart';
@@ -29,6 +31,7 @@ Future<void> main() async {
         ChangeNotifierProvider<SessionProvider>(
           create: (_) => SessionProvider(),
         ),
+        ChangeNotifierProvider<ReviewProvider>(create: (_) => ReviewProvider()),
       ],
       child: const ClassBizzApp(),
     ),

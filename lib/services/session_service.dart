@@ -98,4 +98,38 @@ class SessionService {
   Stream<UserModel?> userStream(String uid) {
     return _firestoreService.getUserStream(uid);
   }
+
+  Stream<AttendeeModel?> attendeeStreamByUid(String sessionId, String uid) {
+    return _firestoreService.attendeeStreamByUid(sessionId, uid);
+  }
+  Future<UserModel?> fetchUserData(String uid) async {
+    try {
+      final data = await FirestoreService().getUser(uid);
+      return data;
+    } catch (e) {
+      throw 'Failed to fetch user data: $e';
+    }
+  }
+
+  Stream<List<SessionModel>> getSessionsByLecturerId(String lecturerId)  {
+    return  _firestoreService.getSessionsByLecturerId(lecturerId);
+  }
+
+  Stream<List<SessionModel?>> getSessionsByAttendeeId(String attendeeId)  {
+    return _firestoreService.getSessionsByAttendeeIdStream(attendeeId);
+  }
+
+  Stream<int>getStudentRanking( String uid) {
+    return _firestoreService.getStudentRanking( uid);
+  }
+
+  Stream<int>getTotalPoints(String uid) {
+    return _firestoreService.getTotalPoints(uid);
+  }
+
+  Stream<int>getTotalAttendedSessions(String uid) {
+    return _firestoreService.getTotalAttendedSessions(uid);
+  }
+
+  Stream<int> getTotalPointsInSession(String sessionId, String uid) => _firestoreService.getTotalPointsInSession(sessionId, uid);
 }

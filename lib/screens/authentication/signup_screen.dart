@@ -1,6 +1,9 @@
+import 'package:classbizz_app/main.dart';
+// import 'package:classbizz_app/screens/aunthentication/email_verifictaion_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
+import '../../screens/aunthentication/login_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -151,7 +154,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             );
                             currentAuth.clearError();
                           } else {
-                            navigator.pop();
+                            // Successful signup
+                            if (mounted) {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const AuthWrapper(),
+                                ),
+                              );
+                            }
                           }
                         },
                   style: ElevatedButton.styleFrom(
@@ -183,7 +194,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     const Text('Already have an account? '),
                     TextButton(
                       onPressed: () {
-                        Navigator.pushReplacementNamed(context, '/login');
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginScreen(),
+                          ),
+                        );
                       },
                       child: const Text('Login'),
                     ),
