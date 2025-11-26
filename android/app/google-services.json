@@ -12,7 +12,12 @@
           "package_name": "com.example.classbizz_app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "805776827361-7le6bnk4if3ljkmfunjrisi8u0q2mhe0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBn21WRJqIl-PwZCQZVe8LShD7Pui7imhc"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "805776827361-7le6bnk4if3ljkmfunjrisi8u0q2mhe0.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "805776827361-dtlk9oe1u1t45ko59aurtgh3pg3s9qgj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.classbizzApp"
+              }
+            }
+          ]
         }
       }
     }

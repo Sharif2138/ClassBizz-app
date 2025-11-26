@@ -2,6 +2,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/users_model.dart';
 import 'firestore_service.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -9,6 +11,7 @@ class AuthService {
   User? get currentUser => _auth.currentUser;
 
   Stream<User?> get authStateChanges => _auth.authStateChanges();
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   Future<User?> createUserWithEmailAndPassword(
     String name,
@@ -135,9 +138,23 @@ class AuthService {
     await _auth.signOut();
   }
 
-  Future<UserModel?> signInWithGoogle() async {
-    
-    throw UnimplementedError('Google Sign-In not implemented yet.');
+  Future<UserCredential?> signInWithGoogle() async {
+    try {
+      final googleUser = await _googleSignIn.signIn();
+      final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+      if (googleAuth == null) {
+        return null;
+      }
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      final userCredential = await _auth.signInWithCredential(credential);
+      return userCredential;
+    } on FirebaseAuthException catch (e) {
+      throw 'Google sign-in failed: ${e.message}';
+    } catch (e) {
+      throw 'Unexpected error during Google sign-in: $e';
+    }
   }
-
 }

@@ -10,6 +10,7 @@ class AuthProvider extends ChangeNotifier {
 
   User? user;
   bool isLoading = false;
+  bool isLoadingGoogle = false;
   String? errorMessage;
 
   AuthProvider() {
@@ -40,6 +41,20 @@ class AuthProvider extends ChangeNotifier {
       errorMessage = e.toString();
     } finally {
       isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> signInWithGoogle() async {
+    isLoadingGoogle = true;
+    notifyListeners();
+    try {
+      errorMessage = '';
+      await _service.signInWithGoogle();
+    } catch (e) {
+      errorMessage = e.toString();
+    } finally {
+      isLoadingGoogle = false;
       notifyListeners();
     }
   }
