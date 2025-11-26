@@ -23,7 +23,7 @@ class StudentProfileScreen extends StatelessWidget {
               // ----- STATS ROW -----
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
-                child: const _StatsRow(),
+                child: _StatsRow(),
               ),
 
               const SizedBox(height: 20),
@@ -75,7 +75,7 @@ class StudentProfileScreen extends StatelessWidget {
 
 // Simple stats row showing basic metrics
 class _StatsRow extends StatelessWidget {
-  const _StatsRow({Key? key}) : super(key: key);
+  const _StatsRow({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -129,12 +129,12 @@ class _SessionHistoryTile extends StatelessWidget {
   final int points;
   final String status;
   const _SessionHistoryTile({
-    Key? key,
+    super.key,
     required this.title,
     required this.date,
     required this.points,
     required this.status,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
