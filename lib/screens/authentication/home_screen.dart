@@ -35,31 +35,24 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 40),
 
-                // Feature icons row — make flexible to avoid overflow on narrow screens
+                // Feature icons row
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: const [
-                    Expanded(
-                      child: _FeatureIcon(
-                        icon: Icons.stars,
-                        label: 'Earn Points',
-                        color: Colors.orange,
-                      ),
+                    _FeatureIcon(
+                      icon: Icons.stars,
+                      label: 'Earn Points',
+                      color: Colors.orange,
                     ),
-                    SizedBox(width: 8),
-                    Expanded(
-                      child: _FeatureIcon(
-                        icon: Icons.emoji_events,
-                        label: 'Compete',
-                        color: Colors.green,
-                      ),
+                    _FeatureIcon(
+                      icon: Icons.emoji_events,
+                      label: 'Compete',
+                      color: Colors.green,
                     ),
-                    SizedBox(width: 8),
-                    Expanded(
-                      child: _FeatureIcon(
-                        icon: Icons.bar_chart,
-                        label: 'Track Progress',
-                        color: Colors.blue,
-                      ),
+                    _FeatureIcon(
+                      icon: Icons.bar_chart,
+                      label: 'Track Progress',
+                      color: Colors.blue,
                     ),
                   ],
                 ),
@@ -73,6 +66,32 @@ class WelcomeScreen extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.pushNamed(context, '/login');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text(
+                      'Login',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+
+                SizedBox(height: 16),
+
+                SizedBox(
+                  width: double.infinity,
+                  height: 55,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/signup');
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blueAccent,
