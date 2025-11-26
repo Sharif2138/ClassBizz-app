@@ -222,7 +222,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 width: double.infinity,
                 height: 55,
                 child: OutlinedButton.icon(
-                  onPressed: isLoadingGoogle ? null : auth.signInWithGoogle,
+                  onPressed: isLoadingGoogle
+                      ? null
+                      : () async {
+                          final authProvider = context.read<AuthProvider>();
+                          await authProvider.signInWithGoogle();
+
+                          if (authProvider.errorMessage != null) {
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(authProvider.errorMessage!),
+                                ),
+                              );
+                              authProvider.clearError();
+                            }
+                          }
+                        },
                   icon: isLoadingGoogle
                       ? const SizedBox(
                           width: 20,
@@ -240,14 +256,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   style: OutlinedButton.styleFrom(
                     side: BorderSide(color: Colors.grey.shade300, width: 1.3),
-                    backgroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),
                   ),
                 ),
               ),
-
               const SizedBox(height: 25),
 
               Center(

@@ -29,15 +29,11 @@ class LeaderboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeColor = Colors.blueAccent;
+
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text("Leaderboard"),
-        centerTitle: true,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.blue,
-      ),
+      backgroundColor: const Color(0xFFF4F6FA),
+    
 
       body: StreamBuilder<List<Map<String, dynamic>>>(
         stream: fetchUsers(),
@@ -47,29 +43,30 @@ class LeaderboardScreen extends StatelessWidget {
           }
 
           final users = snapshot.data!;
-
           if (users.isEmpty) {
             return const Center(child: Text("No users available"));
           }
 
-          // Top 3
           final top3 = users.take(3).toList();
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Page Title
+              const SizedBox(height: 12),
+
+              // Title
               const Padding(
-                padding: EdgeInsets.all(16),
+                padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   "Top Students",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
                 ),
               ),
+              const SizedBox(height: 10),
 
-              // Top 3 section
+              // Top 3 podium
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
+                padding: const EdgeInsets.only(top: 5),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -77,26 +74,32 @@ class LeaderboardScreen extends StatelessWidget {
                       _TopRank(
                         initials: top3[1]['initials'],
                         rank: "2nd",
-                        color: Colors.grey,
+                        color: Colors.grey.shade500,
+                        size: 65,
+                        offset: 10,
                       ),
                     _TopRank(
                       initials: top3[0]['initials'],
                       rank: "1st",
-                      color: Colors.orange,
+                      color: Colors.amber.shade600,
+                      size: 80,
+                      offset: 0,
                     ),
                     if (top3.length > 2)
                       _TopRank(
                         initials: top3[2]['initials'],
                         rank: "3rd",
-                        color: Colors.blueGrey,
+                        color: Colors.brown.shade400,
+                        size: 65,
+                        offset: 10,
                       ),
                   ],
                 ),
               ),
 
-              const SizedBox(height: 10),
+              const SizedBox(height: 20),
 
-              // Student List
+              // List of all users
               Expanded(
                 child: ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -105,35 +108,63 @@ class LeaderboardScreen extends StatelessWidget {
                     final student = users[index];
 
                     return Container(
-                      margin: const EdgeInsets.only(bottom: 10),
-                      padding: const EdgeInsets.all(12),
+                      margin: const EdgeInsets.only(bottom: 12),
+                      padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.grey.shade300),
+                        borderRadius: BorderRadius.circular(14),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
+
                       child: Row(
                         children: [
                           CircleAvatar(
-                            backgroundColor: Colors.blue,
+                            radius: 22,
+                            backgroundColor: themeColor,
                             child: Text(
                               student["initials"],
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
+                                fontSize: 16,
                               ),
                             ),
                           ),
-                          const SizedBox(width: 12),
+
+                          const SizedBox(width: 14),
+
                           Expanded(
                             child: Text(
                               student["name"],
-                              style: const TextStyle(fontSize: 16),
+                              style: const TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
-                          Text(
-                            "${student['points']} pts",
-                            style: const TextStyle(fontWeight: FontWeight.bold),
+
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 5,
+                            ),
+                            decoration: BoxDecoration(
+                              color: themeColor.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              "${student['points']} pts",
+                              style: TextStyle(
+                                color: themeColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -149,33 +180,40 @@ class LeaderboardScreen extends StatelessWidget {
   }
 }
 
-// Widget for Top 3
+// Redesigned Top Rank Podium Widget
 class _TopRank extends StatelessWidget {
   final String initials;
   final String rank;
   final Color color;
-  
+  final double size;
+  final double offset;
 
   const _TopRank({
     required this.initials,
     required this.rank,
     required this.color,
+    this.size = 70,
+    this.offset = 0,
   });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(rank, style: const TextStyle(fontWeight: FontWeight.bold)),
-        const SizedBox(height: 6),
+        Text(
+          rank,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+        SizedBox(height: offset),
         CircleAvatar(
-          radius: 28,
+          radius: size / 2,
           backgroundColor: color,
           child: Text(
             initials,
             style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
+              fontSize: 22,
             ),
           ),
         ),
