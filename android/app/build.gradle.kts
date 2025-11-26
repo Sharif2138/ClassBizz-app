@@ -1,6 +1,6 @@
 plugins {
     id("com.android.application")
-    id("com.google.gms.google-services") // Firebase plugin
+    id("com.google.gms.google-services")
     id("kotlin-android")
     id("dev.flutter.flutter-gradle-plugin")
 }
@@ -12,7 +12,7 @@ android {
     defaultConfig {
         applicationId = "com.example.classbizz_app"
         minSdk = 19
-        targetSdk = 36
+        targetSdk = 36 
         versionCode = 1
         versionName = "1.0"
     }
@@ -36,8 +36,10 @@ android {
 }
 
 dependencies {
+    // Firebase BOM ensures all Firebase libraries use compatible versions
     implementation(platform("com.google.firebase:firebase-bom:32.2.2"))
     implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.android.gms:play-services-auth:20.6.0")
 }
 
 flutter {
