@@ -1,20 +1,18 @@
-// App-level build.gradle.kts
-
 plugins {
     id("com.android.application")
-    id("com.google.gms.google-services") // Firebase Google Services plugin
+    id("com.google.gms.google-services") // Firebase plugin
     id("kotlin-android")
-    id("dev.flutter.flutter-gradle-plugin") // Flutter plugin
+    id("dev.flutter.flutter-gradle-plugin")
 }
 
 android {
     namespace = "com.example.classbizz_app"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.classbizz_app"
         minSdk = 19
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
     }
@@ -31,16 +29,17 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("debug")
+            isMinifyEnabled = false
+            isShrinkResources = false
         }
     }
 }
 
 dependencies {
-    implementation(platform("com.google.firebase:firebase-bom:32.2.2")) // Firebase BOM
-    implementation("com.google.firebase:firebase-auth-ktx") // Firebase Auth
+    implementation(platform("com.google.firebase:firebase-bom:32.2.2"))
+    implementation("com.google.firebase:firebase-auth-ktx")
 }
 
-// Flutter source
 flutter {
     source = "../.."
 }
